@@ -3,96 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>復健紀錄管理系統</title>
+    <title>復健紀錄管理系統 - 醫療專業版</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
         .container {
-            background-color: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
             text-align: center;
-            max-width: 600px;
         }
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
+        .hero-section {
+            padding: 2rem 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 2rem;
         }
-        .subtitle {
-            color: #666;
-            margin-bottom: 40px;
+        .hero-section p {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
         }
-        .card-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        .card {
-            display: block;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            text-decoration: none;
-            color: #333;
-            transition: all 0.3s ease;
-            border: 1px solid #e9ecef;
-        }
-        .card:hover {
-            background-color: #e9f5ff;
-            border-color: #4CAF50;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
-        }
-        .card h3 {
-            margin: 0 0 8px 0;
-            color: #2c3e50;
-        }
-        .card p {
-            margin: 0;
-            color: #666;
-            font-size: 14px;
-        }
-        .footer {
-            margin-top: 40px;
-            color: #999;
-            font-size: 14px;
+        .welcome-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🏥 復健紀錄管理系統</h1>
-        <p class="subtitle">病患復健追蹤與管理平台</p>
+        <div class="hero-section">
+            <span class="welcome-badge">2026 Healthcare Platform</span>
+            <h1>🏥 復健紀錄管理系統</h1>
+            <p>專業、直覺且高效的病患復健追蹤與管理平台</p>
+        </div>
 
-        <div class="card-container">
+        <div class="card-grid">
             <a href="login.html" class="card">
-                <h3>👤 病患登入</h3>
-                <p>病患可登入系統填寫每日復健紀錄</p>
+                <div class="icon">👤</div>
+                <h3>病患登入</h3>
+                <p>登入系統填寫每日復健表單，追蹤您的康復進度。</p>
             </a>
 
             <a href="rehab-form.html" class="card">
-                <h3>📝 復健紀錄表單</h3>
-                <p>填寫每日疼痛程度、完成運動與備註</p>
+                <div class="icon">📝</div>
+                <h3>紀錄表單</h3>
+                <p>快速填寫今日的疼痛程度、完成運動項目與個人備註。</p>
             </a>
 
             <a href="admin.html" class="card">
-                <h3>⚙️ 後台管理</h3>
-                <p>治療師管理患者帳號與查看復健紀錄</p>
+                <div class="icon">⚙️</div>
+                <h3>後台管理</h3>
+                <p>醫療團隊專用，管理患者帳號、分析復健數據與疼痛趨勢。</p>
             </a>
         </div>
 
         <div class="footer">
-            <p>2026 復健紀錄管理系統 v1.0</p>
+            <p>© 2026 復健紀錄管理系統 Professional v1.1</p>
+            <p>致力於提供更好的康復體驗</p>
         </div>
     </div>
 </body>

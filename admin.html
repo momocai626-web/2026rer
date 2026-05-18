@@ -3,300 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>後台管理 - 患者帳號</title>
+    <title>後台管理 - 醫療專業版</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 20px;
-        }
-        .admin-container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        h2 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-        }
-        .tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #ddd;
-        }
-        .tab {
-            padding: 12px 20px;
-            cursor: pointer;
-            border: none;
-            background: none;
-            font-size: 16px;
-            color: #666;
-            border-bottom: 2px solid transparent;
-            transition: all 0.3s ease;
-        }
-        .tab.active {
-            color: #333;
-            border-bottom: 2px solid #4CAF50;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .patients-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        .patients-table th,
-        .patients-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        .patients-table th {
-            background-color: #f8f9fa;
-            font-weight: bold;
-        }
-        .patients-table tr:hover {
-            background-color: #f1f1f1;
-        }
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-right: 10px;
-            transition: background-color 0.3s ease;
-        }
-        .btn-primary {
-            background-color: #4CAF50;
-            color: white;
-        }
-        .btn-primary:hover {
-            background-color: #45a049;
-        }
-        .btn-danger {
-            background-color: #f44336;
-            color: white;
-        }
-        .btn-danger:hover {
-            background-color: #d32f2f;
-        }
-        .btn-info {
-            background-color: #2196F3;
-            color: white;
-        }
-        .btn-info:hover {
-            background-color: #0b7dda;
-        }
-        .form-section {
-            margin-top: 30px;
-            padding: 20px;
-            border: 1px solid #eee;
-            border-radius: 4px;
-        }
-        .form-section h3 {
-            margin-top: 0;
-            color: #333;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .btn-group {
-            margin-top: 20px;
-        }
-        .message {
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 4px;
-            display: none;
-        }
-        .message.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .message.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            color: #777;
-            font-size: 14px;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chart.js 支援 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="admin-container">
-        <h2>後台管理 - 患者帳號</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+            <h2 style="margin:0; text-align:left;">⚙️ 管理中心</h2>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <span id="adminName" style="color: var(--text-secondary); font-size: 0.875rem;">管理員</span>
+                <button onclick="logout()" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.875rem;">登出</button>
+            </div>
+        </div>
         
         <div class="tabs">
-            <button class="tab active" data-tab="patients">患者管理</button>
-            <button class="tab" data-tab="records">紀錄管理</button>
+            <button class="tab active" data-tab="patients">患者帳號管理</button>
+            <button class="tab" data-tab="records">復健紀錄分析</button>
         </div>
         
         <div id="patients-tab" class="tab-content active">
-            <div class="message" id="patients-message"></div>
-            
-            <div class="form-section">
-                <h3>新增患者</h3>
-                <form id="add-patient-form">
-                    <div class="form-group">
-                        <label for="patient-name">姓名:</label>
-                        <input type="text" id="patient-name" name="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="patient-password">密碼:</label>
-                        <input type="password" id="patient-password" name="password" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="patient-record">病歷號:</label>
-                        <input type="text" id="patient-record" name="medicalRecordNumber" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="patient-role">角色:</label>
-                        <select id="patient-role" name="role" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd;">
-                            <option value="patient">patient（一般病患）</option>
-                            <option value="admin">admin（管理員）</option>
-                        </select>
-                    </div>
-                    <div class="btn-group">
-                        <button type="submit" class="btn btn-primary">新增患者</button>
-                        <button type="reset" class="btn btn-info">重設表單</button>
-                    </div>
-                </form>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                <h3 style="margin:0;">患者清單</h3>
+                <button class="btn btn-primary" onclick="openAddModal()">
+                    <span>+ 新增患者</span>
+                </button>
             </div>
-            
-            <div class="form-section">
-                <h3>患者列表</h3>
-                <div id="patients-table-container">
-                    <table class="patients-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>姓名</th>
-                                <th>密碼</th>
-                                <th>病歷號</th>
-                                <th>角色</th>
-                                <th>操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="patients-table-body">
-                            <!-- 會透過 JavaScript 動態填充 -->
-                        </tbody>
-                    </table>
-                </div>
+
+            <div class="table-wrapper">
+                <table class="patients-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>姓名</th>
+                            <th>密碼</th>
+                            <th>病歷號</th>
+                            <th>角色</th>
+                            <th style="text-align: right;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="patients-table-body">
+                        <!-- 動態填充 -->
+                    </tbody>
+                </table>
             </div>
         </div>
         
         <div id="records-tab" class="tab-content">
-            <div class="message" id="records-message"></div>
-            
-            <div class="form-section">
-                <h3>患者紀錄查詢</h3>
-                <div class="form-group">
-                    <label for="patient-id-filter">患者ID:</label>
-                    <input type="text" id="patient-id-filter" placeholder="輸入患者ID查詢紀錄 (留空顯示所有紀錄)">
+            <div class="card-grid" style="grid-template-columns: 1fr; margin-bottom: 2rem;">
+                <div class="card" style="align-items: flex-start; text-align: left; padding: 1.5rem;">
+                    <h3>📈 疼痛程度趨勢圖</h3>
+                    <div style="width: 100%; height: 300px; position: relative;">
+                        <canvas id="painChart"></canvas>
+                    </div>
                 </div>
-                <div class="btn-group">
-                    <button id="filter-records-btn" class="btn btn-primary">查詢紀錄</button>
-                    <button id="reset-filter-btn" class="btn btn-info">重設查詢</button>
+            </div>
+
+            <div style="background: var(--primary-light); padding: 1.5rem; border-radius: var(--radius-md); margin-bottom: 2rem; border: 1px solid var(--primary-color);">
+                <h3 style="margin-bottom: 1rem; color: var(--primary-color);">🔍 紀錄查詢</h3>
+                <div style="display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: end;">
+                    <div class="form-group" style="margin:0;">
+                        <label for="patient-id-filter">輸入患者 ID</label>
+                        <input type="text" id="patient-id-filter" placeholder="例如: kf9j2l... (留空則顯示全部)">
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button id="filter-records-btn" class="btn btn-primary">執行查詢</button>
+                        <button id="reset-filter-btn" class="btn btn-outline">清除</button>
+                    </div>
                 </div>
             </div>
             
-            <div class="form-section">
-                <h3>紀錄列表</h3>
-                <div id="records-table-container">
-                    <table class="patients-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>日期</th>
-                                <th>疼痛程度</th>
-                                <th>完成運動</th>
-                                <th>備註</th>
-                                <th>病患ID</th>
-                                <th>操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="records-table-body">
-                            <!-- 會透過 JavaScript 動態填充 -->
-                        </tbody>
-                    </table>
-                </div>
+            <div class="table-wrapper">
+                <table class="patients-table">
+                    <thead>
+                        <tr>
+                            <th>日期</th>
+                            <th>疼痛程度</th>
+                            <th>完成運動</th>
+                            <th>備註</th>
+                            <th>病患ID</th>
+                            <th style="text-align: right;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="records-table-body">
+                        <!-- 動態填充 -->
+                    </tbody>
+                </table>
             </div>
         </div>
         
         <div class="footer">
-            <button onclick="logout()" class="btn btn-info" style="width:auto; padding:8px 20px; margin-top:10px;">登出</button>
-            <p style="margin-top:10px;">復健紀錄管理系統 - 後台管理 v1.0</p>
+            <p>復健紀錄管理系統 - 醫療專業版 v1.1</p>
+        </div>
+
+        <!-- Toast Container -->
+        <div id="toastContainer" class="toast-container"></div>
+
+        <!-- Modal -->
+        <div id="patientModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()" style="position: absolute; top: 1rem; right: 1.5rem; font-size: 1.5rem; cursor: pointer;">&times;</span>
+                <h3 id="modalTitle" style="margin-bottom: 1.5rem;">新增患者</h3>
+                <form id="patientForm">
+                    <input type="hidden" id="editPatientId">
+                    <div class="form-group">
+                        <label>姓名</label>
+                        <input type="text" id="modalName" required placeholder="請輸入病患姓名">
+                    </div>
+                    <div class="form-group">
+                        <label>登入密碼</label>
+                        <input type="password" id="modalPassword" required placeholder="設定登入密碼">
+                    </div>
+                    <div class="form-group">
+                        <label>病歷號碼</label>
+                        <input type="text" id="modalRecord" placeholder="醫院病歷編號">
+                    </div>
+                    <div class="form-group">
+                        <label>帳號權限</label>
+                        <select id="modalRole">
+                            <option value="patient">病患 (patient)</option>
+                            <option value="admin">管理員 (admin)</option>
+                        </select>
+                    </div>
+                    <div style="margin-top:2rem; display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                        <button type="submit" class="btn btn-primary">儲存資料</button>
+                        <button type="button" class="btn btn-outline" onclick="closeModal()">取消</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
     <script>
-        // Configuration - Replace with your actual Google App Script Web App URL
         const API_URL = 'https://script.google.com/macros/s/AKfycbyb_GkXOiv8-soq6hOUVTHdKRsayFsP56WkA6SOhD9aOxmab5OxXUUbguWFpwnhiVDcjQ/exec';
         
-        // DOM Elements
         const tabs = document.querySelectorAll('.tab');
         const tabContents = document.querySelectorAll('.tab-content');
-        const patientsMessage = document.getElementById('patients-message');
-        const recordsMessage = document.getElementById('records-message');
-        const addPatientForm = document.getElementById('add-patient-form');
         const patientsTableBody = document.getElementById('patients-table-body');
         const patientIdFilter = document.getElementById('patient-id-filter');
         const filterRecordsBtn = document.getElementById('filter-records-btn');
         const resetFilterBtn = document.getElementById('reset-filter-btn');
         const recordsTableBody = document.getElementById('records-table-body');
         
-        // State
         let patients = [];
         let records = [];
+        let painChart = null;
         
-        // Initialize + 角色權限檢查
         document.addEventListener('DOMContentLoaded', () => {
-            const patientData = sessionStorage.getItem('currentPatient');
-            
-            if (!patientData) {
-                alert('請先登入');
+            const adminData = sessionStorage.getItem('currentPatient');
+            if (!adminData) {
                 window.location.href = 'login.html';
                 return;
             }
 
             try {
-                const patient = JSON.parse(patientData);
-                if (patient.角色 !== 'admin') {
-                    alert('您沒有管理員權限');
+                const admin = JSON.parse(adminData);
+                if (admin.角色 !== 'admin') {
                     window.location.href = 'index.html';
                     return;
                 }
+                document.getElementById('adminName').textContent = `管理員: ${admin.姓名}`;
             } catch (e) {
-                alert('登入狀態異常，請重新登入');
                 window.location.href = 'login.html';
                 return;
             }
@@ -306,222 +175,231 @@
             setupEventListeners();
         });
 
-        // 登出功能
         function logout() {
             sessionStorage.removeItem('currentPatient');
             window.location.href = 'index.html';
         }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.transition = 'all 0.4s ease';
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = '👤 新增患者帳號';
+            document.getElementById('patientForm').reset();
+            document.getElementById('editPatientId').value = '';
+            document.getElementById('patientModal').style.display = 'flex';
+        }
+
+        function openEditModal(patient) {
+            document.getElementById('modalTitle').textContent = '✏️ 編輯患者資料';
+            document.getElementById('editPatientId').value = patient.ID || '';
+            document.getElementById('modalName').value = patient.姓名 || '';
+            document.getElementById('modalPassword').value = patient.密碼 || '';
+            document.getElementById('modalRecord').value = patient.病歷號 || '';
+            document.getElementById('modalRole').value = patient.角色 || 'patient';
+            document.getElementById('patientModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('patientModal').style.display = 'none';
+        }
+
+        document.getElementById('patientForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const id = document.getElementById('editPatientId').value;
+            const patientData = {
+                name: document.getElementById('modalName').value.trim(),
+                password: document.getElementById('modalPassword').value,
+                medicalRecordNumber: document.getElementById('modalRecord').value.trim(),
+                role: document.getElementById('modalRole').value
+            };
+
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '處理中...';
+
+            const result = id 
+                ? await apiRequest('updatePatient', patientData, id)
+                : await apiRequest('createPatient', patientData);
+
+            if (result.success) {
+                showToast(result.message, 'success');
+                closeModal();
+                loadPatients();
+            } else {
+                showToast(result.message, 'error');
+            }
+            submitBtn.disabled = false;
+            submitBtn.textContent = '儲存資料';
+        });
         
-        // Event Listeners
         function setupEventListeners() {
-            // Tab switching
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
-                    // Deactivate all tabs
                     tabs.forEach(t => t.classList.remove('active'));
                     tabContents.forEach(c => c.classList.remove('active'));
-                    
-                    // Activate clicked tab
                     tab.classList.add('active');
-                    const tabId = tab.getAttribute('data-tab') + '-tab';
-                    document.getElementById(tabId).classList.add('active');
+                    document.getElementById(tab.getAttribute('data-tab') + '-tab').classList.add('active');
                 });
             });
             
-            // Add patient form
-            addPatientForm.addEventListener('submit', handleAddPatientSubmit);
-            
-            // Filter records
-            filterRecordsBtn.addEventListener('click', () => {
-                const patientId = patientIdFilter.value.trim();
-                loadRecords(patientId || null);
-            });
-            
+            filterRecordsBtn.addEventListener('click', () => loadRecords(patientIdFilter.value.trim() || null));
             resetFilterBtn.addEventListener('click', () => {
                 patientIdFilter.value = '';
-                loadRecords(); // Load all records
+                loadRecords();
             });
         }
         
-        // API Functions
         async function apiRequest(action, data = null, id = null) {
             try {
-                const payload = { action };
-                if (data !== null) payload.data = data;
-                if (id !== null) payload.id = id;
-
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'text/plain',   // 使用 text/plain 可避開 Google Apps Script 的 CORS 問題
-                    },
-                    body: JSON.stringify(payload)
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({ action, data, id })
                 });
-
-                // 先以文字方式讀取，再嘗試轉成 JSON（Google Apps Script 有時回傳格式不標準）
-                const text = await response.text();
-                try {
-                    return JSON.parse(text);
-                } catch (e) {
-                    console.warn('伺服器回應不是標準 JSON:', text);
-                    return { success: false, message: '伺服器回應格式錯誤' };
-                }
+                return await response.json();
             } catch (error) {
                 console.error('API Error:', error);
-                return { success: false, message: '網路錯誤，請稍後再試' };
+                return { success: false, message: '網路錯誤' };
             }
         }
         
-        // Patients CRUD
         async function loadPatients() {
-            showMessage(patientsMessage, '載入中...', 'info');
             const result = await apiRequest('getPatients');
-            
             if (result.success) {
                 patients = result.data || [];
                 renderPatientsTable();
-                showMessage(patientsMessage, `載入了 ${patients.length} 位患者`, 'success');
-            } else {
-                showMessage(patientsMessage, result.message, 'error');
-            }
-        }
-        
-        async function handleAddPatientSubmit(e) {
-            e.preventDefault();
-            
-            const patientData = {
-                name: document.getElementById('patient-name').value.trim(),
-                password: document.getElementById('patient-password').value,
-                medicalRecordNumber: document.getElementById('patient-record').value.trim(),
-                role: document.getElementById('patient-role').value
-            };
-            
-            // Basic validation
-            if (!patientData.name || !patientData.password || !patientData.medicalRecordNumber) {
-                showMessage(patientsMessage, '請填寫所有欄位', 'error');
-                return;
-            }
-            
-            showMessage(patientsMessage, '新增中...', 'info');
-            const result = await apiRequest('createPatient', patientData);
-            
-            if (result.success) {
-                showMessage(patientsMessage, '患者新增成功！', 'success');
-                addPatientForm.reset();
-                loadPatients(); // Refresh list
-            } else {
-                showMessage(patientsMessage, result.message, 'error');
             }
         }
         
         async function deletePatient(id) {
-            if (!confirm('確定要刪除此患者嗎？此操作無法復原。')) {
-                return;
-            }
-            
-            showMessage(patientsMessage, '刪除中...', 'info');
+            if (!confirm('確定要刪除此患者嗎？此操作將無法復原。')) return;
             const result = await apiRequest('deletePatient', null, id);
-            
             if (result.success) {
-                showMessage(patientsMessage, '患者已刪除', 'success');
-                loadPatients(); // Refresh list
-            } else {
-                showMessage(patientsMessage, result.message, 'error');
+                showToast('已成功刪除患者', 'success');
+                loadPatients();
             }
         }
         
-        // Records CRUD
         async function loadRecords(patientId = null) {
-            showMessage(recordsMessage, '載入中...', 'info');
             const result = await apiRequest('getRecords', null, patientId);
-            
             if (result.success) {
                 records = result.data || [];
-                renderRecordsTable(patientId);
-                const patientIdText = patientId ? ` (患者ID: ${patientId})` : '';
-                showMessage(recordsMessage, `載入了 ${records.length} 筆紀錄${patientIdText}`, 'success');
-            } else {
-                showMessage(recordsMessage, result.message, 'error');
+                renderRecordsTable();
+                updatePainChart(patientId);
             }
         }
         
         async function deleteRecord(id) {
-            if (!confirm('確定要刪除此紀錄嗎？此操作無法復原。')) {
-                return;
-            }
-            
-            showMessage(recordsMessage, '刪除中...', 'info');
+            if (!confirm('確定要刪除此紀錄嗎？')) return;
             const result = await apiRequest('deleteRecord', null, id);
-            
             if (result.success) {
-                showMessage(recordsMessage, '紀錄已刪除', 'success');
-                loadRecords(patientIdFilter.value.trim() || null); // Refresh with current filter
-            } else {
-                showMessage(recordsMessage, result.message, 'error');
+                showToast('已刪除紀錄', 'success');
+                loadRecords(patientIdFilter.value.trim() || null);
             }
         }
         
-        // Render Functions
         function renderPatientsTable() {
-            if (patients.length === 0) {
-                patientsTableBody.innerHTML = '<tr><td colspan="5">目前沒有患者資料</td></tr>';
-                return;
-            }
-            
-            patientsTableBody.innerHTML = patients.map(patient => `
-                <tr>
-                    <td>${patient.ID || ''}</td>
-                    <td>${patient.姓名 || ''}</td>
-                    <td>${patient.密碼 || ''}</td>
-                    <td>${patient.病歷號 || ''}</td>
-                    <td>${patient.角色 || 'patient'}</td>
-                    <td>
-                        <button class="btn btn-danger btn-sm" onclick="deletePatient('${patient.ID}')">刪除</button>
-                    </td>
-                </tr>
-            `).join('');
+            patientsTableBody.innerHTML = patients.length === 0 
+                ? '<tr><td colspan="6" style="text-align:center;">目前無病患資料</td></tr>'
+                : patients.map(p => `
+                    <tr>
+                        <td><code style="background:#f1f5f9; padding:2px 4px; border-radius:4px;">${p.ID || ''}</code></td>
+                        <td><strong>${p.姓名 || ''}</strong></td>
+                        <td>••••••</td>
+                        <td>${p.病歷號 || ''}</td>
+                        <td><span class="badge ${p.角色 === 'admin' ? 'btn-danger' : 'btn-info'}" style="padding:2px 8px; font-size:12px; border-radius:10px;">${p.角色 || 'patient'}</span></td>
+                        <td style="text-align: right;">
+                            <button class="btn btn-outline" style="padding:4px 12px; font-size:12px;" onclick='openEditModal(${JSON.stringify(p)})'>編輯</button>
+                            <button class="btn btn-danger" style="padding:4px 12px; font-size:12px; border:none;" onclick="deletePatient('${p.ID}')">刪除</button>
+                        </td>
+                    </tr>
+                `).join('');
         }
         
-        function renderRecordsTable(filteredPatientId = null) {
-            if (records.length === 0) {
-                recordsTableBody.innerHTML = '<tr><td colspan="7">目前沒有紀錄資料</td></tr>';
+        function renderRecordsTable() {
+            recordsTableBody.innerHTML = records.length === 0
+                ? '<tr><td colspan="6" style="text-align:center;">尚無相關紀錄</td></tr>'
+                : records.map(r => {
+                    const exercise = r['完成運動'] || r['運動完成度'] || '-';
+                    return `
+                        <tr>
+                            <td>${r.日期 ? new Date(r.日期).toLocaleDateString() : ''}</td>
+                            <td><span style="font-weight:bold; color:var(--secondary-color);">${r.疼痛程度 || ''}</span></td>
+                            <td>${exercise}</td>
+                            <td><small>${r.備註 || ''}</small></td>
+                            <td><code>${r.病患ID || ''}</code></td>
+                            <td style="text-align: right;">
+                                <button class="btn btn-danger" style="padding:4px 12px; font-size:12px; border:none;" onclick="deleteRecord('${r['']}')">刪除</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+        }
+
+        function updatePainChart(patientId) {
+            const ctx = document.getElementById('painChart').getContext('2d');
+            
+            // 只有在過濾特定病患時才繪製圖表，否則清除
+            if (!patientId || records.length === 0) {
+                if (painChart) painChart.destroy();
+                ctx.font = '14px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('請查詢特定病患以顯示趨勢圖', ctx.canvas.width/2, ctx.canvas.height/2);
                 return;
             }
 
-            recordsTableBody.innerHTML = records.map(record => {
-                // 支援「完成運動」或「運動完成度」兩種欄位名稱
-                const exercise = record['完成運動'] || record['運動完成度'] || '';
-                return `
-                    <tr>
-                        <td>${record[''] || ''}</td>
-                        <td>${record.日期 || ''}</td>
-                        <td>${record.疼痛程度 || ''}</td>
-                        <td>${exercise}</td>
-                        <td>${record.備註 || ''}</td>
-                        <td>${record.病患ID || ''}</td>
-                        <td>
-                            <button class="btn btn-danger btn-sm" onclick="deleteRecord('${record['']}')">刪除</button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-        
-        // Helper Functions
-        function showMessage(element, message, type = 'info') {
-            element.textContent = message;
-            element.className = 'message';
-            if (type !== 'info') {
-                element.classList.add(type);
-            }
-            element.style.display = 'block';
-            
-            // Auto-hide after 5 seconds for success/error messages
-            if (type === 'success' || type === 'error') {
-                setTimeout(() => {
-                    element.style.display = 'none';
-                }, 5000);
-            }
+            const sortedRecords = [...records].sort((a, b) => new Date(a.日期) - new Date(b.日期));
+            const labels = sortedRecords.map(r => new Date(r.日期).toLocaleDateString());
+            const painMap = { '無痛': 0, '輕微': 1, '中度': 2, '重度': 3, '極度': 4 };
+            const data = sortedRecords.map(r => painMap[r.疼痛程度] || 0);
+
+            if (painChart) painChart.destroy();
+
+            painChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '疼痛程度趨勢',
+                        data: data,
+                        borderColor: '#0284c7',
+                        backgroundColor: 'rgba(2, 132, 199, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.3,
+                        fill: true,
+                        pointBackgroundColor: '#0284c7',
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 4,
+                            ticks: {
+                                stepSize: 1,
+                                callback: value => Object.keys(painMap).find(key => painMap[key] === value)
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
         }
     </script>
 </body>

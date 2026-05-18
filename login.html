@@ -3,187 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>復健紀錄系統 - 登入</title>
+    <title>病患登入 - 復健紀錄管理系統</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            position: relative;
-        }
-        .loading-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        .loading-spinner {
-            border: 4px solid rgba(255,255,255,0.3);
-            border-top: 4px solid #fff;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 10px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .loading-text {
-            color: white;
-            font-size: 16px;
-        }
-        .login-container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
-        }
-        h2 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
-        input[type="text"],
-        input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 16px;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            color: #777;
-            font-size: 14px;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-        <div class="login-container">
-            <h2>病患登入</h2>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="username">病患姓名:</label>
-                    <input type="text" id="username" name="username" required placeholder="請輸入姓名">
-                </div>
-                <div class="form-group">
-                    <label for="password">密碼:</label>
-                    <input type="password" id="password" name="password" required placeholder="請輸入密碼">
-                </div>
-                <button type="submit">登入</button>
-                <div id="loadingOverlay" class="loading-overlay" style="display: none;">
-                    <div class="loading-spinner"></div>
-                    <div class="loading-text">載入中...</div>
-                </div>
-            </form>
-            <div class="footer">
-                復健紀錄管理系統 v1.0
-            </div>
+    <div class="login-container">
+        <div style="text-align: center; margin-bottom: 2.5rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">👤</div>
+            <h1>歡迎回來</h1>
+            <p>請輸入您的身分資訊以開始今日的復健紀錄</p>
         </div>
 
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">姓名或病患 ID</label>
+                <input type="text" id="username" name="username" required placeholder="請輸入姓名或 ID" autocomplete="username">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">登入密碼</label>
+                <input type="password" id="password" name="password" required placeholder="請輸入密碼" autocomplete="current-password">
+            </div>
+            
+            <button type="submit" id="loginBtn" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                <span>確認登入</span>
+            </button>
+        </form>
+        
+        <div class="footer" style="margin-top: 2rem;">
+            <a href="index.html" class="btn btn-outline" style="width: 100%;">返回首頁</a>
+            <p style="margin-top: 1.5rem;">2026 復健管理系統 Professional v1.1</p>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 3000;"></div>
+
     <script>
-        function showLoading(show) {
-            const overlay = document.getElementById('loadingOverlay');
-            if (overlay) {
-                overlay.style.display = show ? 'block' : 'none';
-            }
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.transition = 'all 0.4s ease';
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
         }
 
         document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault(); // 防止表單默認提交
+            e.preventDefault();
             
-            // 獲取表單值
-            const username = document.getElementById('username').value;
+            const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const originalContent = loginBtn.innerHTML;
             
-            // 發送登入請求到後端API
-            const apiUrl = 'https://script.google.com/macros/s/AKfycbyb_GkXOiv8-soq6hOUVTHdKRsayFsP56WkA6SOhD9aOxmab5OxXUUbguWFpwnhiVDcjQ/exec';
+            loginBtn.innerHTML = '<div class="loading-spinner" style="width:1.2rem; height:1.2rem; border-width:2px;"></div><span>驗證中...</span>';
+            loginBtn.disabled = true;
             
-            showLoading(true);
+            const API_URL = 'https://script.google.com/macros/s/AKfycbyb_GkXOiv8-soq6hOUVTHdKRsayFsP56WkA6SOhD9aOxmab5OxXUUbguWFpwnhiVDcjQ/exec';
             
-            fetch(apiUrl, {
+            fetch(API_URL, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    action: 'getPatients',
-                    // 這裡我們先不按ID過濾，取得所有患者再進行比對
-                    // 實際應用中可以改進為直接查詢特定用戶
-                })
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({ action: 'getPatients' })
             })
             .then(response => response.json())
             .then(result => {
-                showLoading(false);
-                if (result.success && result.data) {
-                    // 在返回的患者列表中尋找匹配的姓名和密碼
-                    const patients = Array.isArray(result.data) ? result.data : [];
-                    const matchedPatient = patients.find(patient => 
-                        patient.姓名 === username && patient.密碼 === password
-                    );
+                if (result.success) {
+                    const patients = result.data;
+                    const patient = patients.find(p => (p.姓名 === username || p.ID === username) && p.密碼 === password);
                     
-                    if (matchedPatient) {
-                        // 登入成功，儲存患者資料 + 角色
-                        sessionStorage.setItem('currentPatient', JSON.stringify(matchedPatient));
-                        
-                        // 根據角色決定跳轉頁面
-                        if (matchedPatient.角色 === 'admin') {
-                            window.location.href = 'admin.html';
-                        } else {
-                            window.location.href = 'rehab-form.html';
-                        }
+                    if (patient) {
+                        showToast('登入成功！正在導向...', 'success');
+                        sessionStorage.setItem('currentPatient', JSON.stringify(patient));
+                        setTimeout(() => {
+                            window.location.href = (patient.角色 === 'admin') ? 'admin.html' : 'rehab-form.html';
+                        }, 1000);
                     } else {
-                        alert('帳號或密碼錯誤，請重新輸入');
+                        showToast('登入失敗，帳號或密碼錯誤', 'error');
+                        loginBtn.innerHTML = originalContent;
+                        loginBtn.disabled = false;
                     }
                 } else {
-                    alert('伺服器錯誤：' + (result.message || '未知錯誤'));
+                    showToast('伺服器錯誤: ' + result.message, 'error');
+                    loginBtn.innerHTML = originalContent;
+                    loginBtn.disabled = false;
                 }
             })
             .catch(error => {
-                showLoading(false);
-                console.error('登入錯誤:', error);
-                alert('網路錯誤，請稍後再試');
+                console.error('Error:', error);
+                showToast('網路連線異常', 'error');
+                loginBtn.innerHTML = originalContent;
+                loginBtn.disabled = false;
             });
         });
     </script>
