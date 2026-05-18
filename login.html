@@ -3,44 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>病患登入 - 復健紀錄管理系統</title>
+    <title>病患登入 - 復健紀錄回報系統 | 臺大醫院雲林分院 斗六院區 復健部</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- 引入 Bootstrap Icons 5.3+ -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
-    <div class="login-container">
-        <div style="text-align: center; margin-bottom: 2.5rem;">
-            <div style="font-size: 3rem; margin-bottom: 1rem;">👤</div>
-            <h1>歡迎回來</h1>
-            <p>請輸入您的身分資訊以開始今日的復健紀錄</p>
-        </div>
+    <header class="site-header">
+        <a href="index.html" class="site-logo">
+            <i class="bi bi-hospital-fill text-primary" style="margin-right: 0.5rem;"></i> 斗六台大醫院 復健部
+        </a>
+    </header>
 
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="username">姓名或病患 ID</label>
-                <input type="text" id="username" name="username" required placeholder="請輸入姓名或 ID" autocomplete="username">
+    <main>
+        <div class="container form-narrow">
+            <div class="card">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <div style="font-size: 3.5rem; margin-bottom: 1rem; color: var(--primary-color);">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+                    <h1 style="font-size: 1.5rem; margin-bottom: 0.5rem;">歡迎回來</h1>
+                    <p style="color: var(--text-secondary); font-size: 0.875rem;">請輸入身分資訊以開始今日的紀錄</p>
+                </div>
+
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="username">姓名或病患 ID</label>
+                        <input type="text" id="username" name="username" required placeholder="請輸入姓名或 ID" autocomplete="username">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">登入密碼</label>
+                        <input type="password" id="password" name="password" required placeholder="請輸入密碼" autocomplete="current-password">
+                    </div>
+                    
+                    <button type="submit" id="loginBtn" class="btn btn-primary" style="width: 100%; margin-top: 1rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                        <i class="bi bi-shield-lock-fill"></i> <span>確認登入</span>
+                    </button>
+                </form>
+                
+                <div style="margin-top: 1.5rem;">
+                    <a href="index.html" class="btn btn-outline" style="width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                        <i class="bi bi-arrow-left"></i> 返回首頁
+                    </a>
+                </div>
             </div>
-            
-            <div class="form-group">
-                <label for="password">登入密碼</label>
-                <input type="password" id="password" name="password" required placeholder="請輸入密碼" autocomplete="current-password">
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-content">
+            <div class="footer-links">
+                <a href="javascript:void(0)" onclick="openLegalModal('disclaimer')">免責聲明</a>
+                <a href="javascript:void(0)" onclick="openLegalModal('privacy')">隱私權宣告</a>
             </div>
-            
-            <button type="submit" id="loginBtn" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
-                <span>確認登入</span>
-            </button>
-        </form>
-        
-        <div class="footer" style="margin-top: 2rem;">
-            <a href="index.html" class="btn btn-outline" style="width: 100%;">返回首頁</a>
-            <p style="margin-top: 1.5rem;">2026 復健管理系統 Professional v1.1</p>
+            <div class="copyright">
+                © 2026 臺大醫院雲林分院 斗六院區 復健部. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Legal Modals -->
+    <div id="legalModal" class="modal legal-modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLegalModal()" style="position: absolute; top: 1.5rem; right: 2rem; font-size: 2rem; cursor: pointer;">&times;</span>
+            <h3 id="legalModalTitle" style="margin-bottom: 1.5rem; color: var(--primary-color); display: flex; align-items: center; gap: 0.5rem;">聲明標題</h3>
+            <div id="legalModalBody" class="legal-text"></div>
+            <div style="margin-top: 2rem; text-align: right;">
+                <button class="btn btn-primary" onclick="closeLegalModal()">我已瞭解</button>
+            </div>
         </div>
     </div>
 
     <!-- Toast Container -->
-    <div id="toastContainer" class="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 3000;"></div>
+    <div id="toastContainer" class="toast-container"></div>
 
     <script>
+        // ... (login script remains mostly same, adding showToast logic)
+        const API_URL = 'https://script.google.com/macros/s/AKfycbyb_GkXOiv8-soq6hOUVTHdKRsayFsP56WkA6SOhD9aOxmab5OxXUUbguWFpwnhiVDcjQ/exec';
+
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -56,7 +98,6 @@
 
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
             const loginBtn = document.getElementById('loginBtn');
@@ -64,8 +105,6 @@
             
             loginBtn.innerHTML = '<div class="loading-spinner" style="width:1.2rem; height:1.2rem; border-width:2px;"></div><span>驗證中...</span>';
             loginBtn.disabled = true;
-            
-            const API_URL = 'https://script.google.com/macros/s/AKfycbyb_GkXOiv8-soq6hOUVTHdKRsayFsP56WkA6SOhD9aOxmab5OxXUUbguWFpwnhiVDcjQ/exec';
             
             fetch(API_URL, {
                 method: 'POST',
@@ -77,7 +116,6 @@
                 if (result.success) {
                     const patients = result.data;
                     const patient = patients.find(p => (p.姓名 === username || p.ID === username) && p.密碼 === password);
-                    
                     if (patient) {
                         showToast('登入成功！正在導向...', 'success');
                         sessionStorage.setItem('currentPatient', JSON.stringify(patient));
@@ -85,23 +123,38 @@
                             window.location.href = (patient.角色 === 'admin') ? 'admin.html' : 'rehab-form.html';
                         }, 1000);
                     } else {
-                        showToast('登入失敗，帳號或密碼錯誤', 'error');
+                        showToast('帳號或密碼錯誤', 'error');
                         loginBtn.innerHTML = originalContent;
                         loginBtn.disabled = false;
                     }
                 } else {
-                    showToast('伺服器錯誤: ' + result.message, 'error');
+                    showToast('伺服器錯誤', 'error');
                     loginBtn.innerHTML = originalContent;
                     loginBtn.disabled = false;
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
                 showToast('網路連線異常', 'error');
                 loginBtn.innerHTML = originalContent;
                 loginBtn.disabled = false;
             });
         });
+
+        // Legal Modal Logic
+        const legalContent = {
+            disclaimer: { title: '<i class="bi bi-file-earmark-text-fill text-primary" style="margin-right: 0.5rem;"></i> 免責聲明', body: '<h4>1. 醫療建議</h4><p>本系統所載之資訊僅供輔助紀錄與參考，不提供醫療診斷或專業建議。</p><h4>2. 臨床決策</h4><p>任何醫療決策應經由具備執照之專業人員評估。</p>' },
+            privacy: { title: '<i class="bi bi-shield-fill-check text-primary" style="margin-right: 0.5rem;"></i> 隱私權宣告', body: '<h4>1. 資料蒐集</h4><p>本系統蒐集之資料包括病患身分與復健紀錄。</p><h4>2. 資料用途</h4><p>僅用於臨床追蹤與統計，不揭露予第三方。</p>' }
+        };
+
+        function openLegalModal(type) {
+            const content = legalContent[type];
+            if (!content) return;
+            document.getElementById('legalModalTitle').innerHTML = content.title;
+            document.getElementById('legalModalBody').innerHTML = content.body;
+            document.getElementById('legalModal').style.display = 'flex';
+        }
+        function closeLegalModal() { document.getElementById('legalModal').style.display = 'none'; }
+        window.onclick = function(event) { if (event.target == document.getElementById('legalModal')) closeLegalModal(); }
     </script>
 </body>
 </html>

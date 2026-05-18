@@ -3,16 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>每日復健紀錄 - 醫療專業版</title>
+    <title>復健部 - 復健紀錄回報系統 | 臺大醫院雲林分院 斗六院區</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- 引入 Bootstrap Icons 5.3+ -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
     <div class="form-container">
-        <h2>🏥 每日復健紀錄</h2>
+        <h2 style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+            <i class="bi bi-hospital-fill text-primary"></i> 斗六台大醫院 復健部
+        </h2>
+        <h4 style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem; font-weight: 500;">每日復健紀錄回報系統</h4>
         <form id="rehabForm">
             <div class="form-group">
-                <label>目前病患：<span id="patientNameDisplay" style="color:var(--primary-color);">正在載入...</span></label>
+                <label>目前病患：<span id="patientNameDisplay" style="color:var(--primary-color); font-weight:700;"><i class="bi bi-person-fill" style="margin-right: 0.25rem;"></i>正在載入...</span></label>
                 <input type="hidden" id="patientId" name="patientId">
             </div>
             
@@ -70,15 +75,17 @@
                 <textarea id="remarks" name="remarks" placeholder="請紀錄今日復健的心得或任何不適感..."></textarea>
             </div>
             
-            <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%;">
-                <span>送出復健紀錄</span>
+            <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <i class="bi bi-send-fill"></i> <span>送出復健紀錄</span>
             </button>
         </form>
         
         <div class="footer">
             <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 1rem;">
-                <button onclick="logout()" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.875rem;">登出系統</button>
-                <p>© 2026 復健管理系統</p>
+                <button onclick="logout()" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.35rem;">
+                    <i class="bi bi-box-arrow-right"></i> 登出系統
+                </button>
+                <p>© 2026 臺大醫院雲林分院 斗六院區 復健部</p>
             </div>
         </div>
     </div>
