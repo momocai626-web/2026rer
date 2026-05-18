@@ -178,6 +178,13 @@
                         <label for="patient-record">病歷號:</label>
                         <input type="text" id="patient-record" name="medicalRecordNumber" required>
                     </div>
+                    <div class="form-group">
+                        <label for="patient-role">角色:</label>
+                        <select id="patient-role" name="role" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd;">
+                            <option value="patient">patient（一般病患）</option>
+                            <option value="admin">admin（管理員）</option>
+                        </select>
+                    </div>
                     <div class="btn-group">
                         <button type="submit" class="btn btn-primary">新增患者</button>
                         <button type="reset" class="btn btn-info">重設表單</button>
@@ -195,6 +202,7 @@
                                 <th>姓名</th>
                                 <th>密碼</th>
                                 <th>病歷號</th>
+                                <th>角色</th>
                                 <th>操作</th>
                             </tr>
                         </thead>
@@ -245,7 +253,8 @@
         </div>
         
         <div class="footer">
-            復健紀錄管理系統 - 後台管理 v1.0
+            <button onclick="logout()" class="btn btn-info" style="width:auto; padding:8px 20px; margin-top:10px;">登出</button>
+            <p style="margin-top:10px;">復健紀錄管理系統 - 後台管理 v1.0</p>
         </div>
     </div>
 
@@ -269,12 +278,39 @@
         let patients = [];
         let records = [];
         
-        // Initialize
+        // Initialize + 角色權限檢查
         document.addEventListener('DOMContentLoaded', () => {
+            const patientData = sessionStorage.getItem('currentPatient');
+            
+            if (!patientData) {
+                alert('請先登入');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const patient = JSON.parse(patientData);
+                if (patient.角色 !== 'admin') {
+                    alert('您沒有管理員權限');
+                    window.location.href = 'index.html';
+                    return;
+                }
+            } catch (e) {
+                alert('登入狀態異常，請重新登入');
+                window.location.href = 'login.html';
+                return;
+            }
+
             loadPatients();
-            loadRecords(); // Load all records by default
+            loadRecords();
             setupEventListeners();
         });
+
+        // 登出功能
+        function logout() {
+            sessionStorage.removeItem('currentPatient');
+            window.location.href = 'index.html';
+        }
         
         // Event Listeners
         function setupEventListeners() {
@@ -356,7 +392,8 @@
             const patientData = {
                 name: document.getElementById('patient-name').value.trim(),
                 password: document.getElementById('patient-password').value,
-                medicalRecordNumber: document.getElementById('patient-record').value.trim()
+                medicalRecordNumber: document.getElementById('patient-record').value.trim(),
+                role: document.getElementById('patient-role').value
             };
             
             // Basic validation
@@ -437,6 +474,7 @@
                     <td>${patient.姓名 || ''}</td>
                     <td>${patient.密碼 || ''}</td>
                     <td>${patient.病歷號 || ''}</td>
+                    <td>${patient.角色 || 'patient'}</td>
                     <td>
                         <button class="btn btn-danger btn-sm" onclick="deletePatient('${patient.ID}')">刪除</button>
                     </td>

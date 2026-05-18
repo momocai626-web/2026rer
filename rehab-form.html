@@ -174,7 +174,8 @@
         </div>
         
         <div class="footer">
-            復健紀錄管理系統 v1.0
+            <button onclick="logout()" class="btn btn-info" style="width:auto; padding:8px 20px; margin-top:10px;">登出</button>
+            <p style="margin-top:10px;">復健紀錄管理系統 v1.0</p>
         </div>
     </div>
 
@@ -243,29 +244,41 @@
         // 設置今天為預設日期
         document.getElementById('date').valueAsDate = new Date();
 
-        // 自動帶入登入患者資料
+        // 登入權限檢查 + 自動帶入患者資料
         document.addEventListener('DOMContentLoaded', function() {
             const patientData = sessionStorage.getItem('currentPatient');
-            if (patientData) {
-                try {
-                    const patient = JSON.parse(patientData);
-                    const patientIdInput = document.getElementById('patientId');
-                    const patientNameDisplay = document.getElementById('patientNameDisplay');
-                    
-                    if (patientIdInput) patientIdInput.value = patient.ID || '';
-                    if (patientNameDisplay) patientNameDisplay.textContent = patient.姓名 || '未知患者';
-                } catch (e) {
-                    console.error('解析患者資料失敗:', e);
+            
+            if (!patientData) {
+                alert('請先登入');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const patient = JSON.parse(patientData);
+                
+                // 只允許 patient 角色進入
+                if (patient.角色 && patient.角色 !== 'patient') {
+                    alert('此頁面僅供病患使用');
+                    window.location.href = 'index.html';
+                    return;
                 }
-            } else {
-                // 沒有登入資料時顯示提示
+
+                const patientIdInput = document.getElementById('patientId');
                 const patientNameDisplay = document.getElementById('patientNameDisplay');
-                if (patientNameDisplay) {
-                    patientNameDisplay.textContent = '請先登入';
-                    patientNameDisplay.style.color = '#f44336';
-                }
+                
+                if (patientIdInput) patientIdInput.value = patient.ID || '';
+                if (patientNameDisplay) patientNameDisplay.textContent = patient.姓名 || '未知患者';
+            } catch (e) {
+                console.error('解析患者資料失敗:', e);
             }
         });
+
+        // 登出功能
+        function logout() {
+            sessionStorage.removeItem('currentPatient');
+            window.location.href = 'index.html';
+        }
     </script>
 </body>
 </html>

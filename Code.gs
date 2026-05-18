@@ -32,7 +32,7 @@ function onOpen() {
 
 // Initialize sheets with headers
 function initializeSheets() {
-  getOrCreateSheet(PATIENTS_SHEET_NAME, ['ID', '姓名', '密碼', '病歷號']);
+  getOrCreateSheet(PATIENTS_SHEET_NAME, ['ID', '姓名', '密碼', '病歷號', '角色']);
   getOrCreateSheet(RECORDS_SHEET_NAME, ['日期', '疼痛程度', '完成運動', '備註', '病患ID']);
 }
 
@@ -45,7 +45,8 @@ function createPatient(patientData) {
       patientData.id || generateId(),
       patientData.name,
       patientData.password,
-      patientData.medicalRecordNumber
+      patientData.medicalRecordNumber,
+      patientData.role || 'patient'   // 新增角色欄位，預設為 patient
     ];
     sheet.appendRow(newRow);
     return { success: true, message: '新增患者成功' };
@@ -107,7 +108,8 @@ function updatePatient(id, patientData) {
       id,
       patientData.name || rows[rowIndex][headers.indexOf('姓名')],
       patientData.password || rows[rowIndex][headers.indexOf('密碼')],
-      patientData.medicalRecordNumber || rows[rowIndex][headers.indexOf('病歷號')]
+      patientData.medicalRecordNumber || rows[rowIndex][headers.indexOf('病歷號')],
+      patientData.role || rows[rowIndex][headers.indexOf('角色')]
     ];
     
     sheet.getRange(rowNum, 1, 1, updateRow.length).setValues([updateRow]);
