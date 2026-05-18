@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>復健紀錄表單</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .form-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="date"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        textarea {
+            height: 80px;
+            resize: vertical;
+        }
+        .radio-group,
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .radio-option,
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0b7dda;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #777;
+            font-size: 14px;
+        }
+        .success-message {
+            display: none;
+            padding: 15px;
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        .error-message {
+            display: none;
+            padding: 15px;
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>每日復健紀錄</h2>
+        <form id="rehabForm">
+            <div class="form-group">
+                <label>目前病患：<span id="patientNameDisplay" style="color:#4CAF50;">尚未登入</span></label>
+                <input type="hidden" id="patientId" name="patientId">
+            </div>
+            
+            <div class="form-group">
+                <label for="date">日期:</label>
+                <input type="date" id="date" name="date" required>
+            </div>
+            
+            <div class="form-group">
+                <label>疼痛程度:</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="painLevel" value="無痛" checked>
+                        無痛
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="painLevel" value="輕微">
+                        輕微
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="painLevel" value="中度">
+                        中度
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="painLevel" value="重度">
+                        重度
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="painLevel" value="極度">
+                        極度
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>完成運動:</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="exercise" value="爬牆">
+                        爬牆
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="exercise" value="毛巾操">
+                        毛巾操
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="exercise" value="鐘擺">
+                        鐘擺
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="remarks">備註:</label>
+                <textarea id="remarks" name="remarks" placeholder="請輸入備註內容"></textarea>
+            </div>
+            
+            <button type="submit">送出紀錄</button>
+        </form>
+        
+        <div id="successMessage" class="success-message">
+            紀錄已成功送出！
+        </div>
+        
+        <div id="errorMessage" class="error-message">
+            送出失敗，請稍後再試。
+        </div>
+        
+        <div class="footer">
+            復健紀錄管理系統 v1.0
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('rehabForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // 防止表單默認提交
+            
+            // 獲取表單值
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // 處理複選框值（可能有多個選項）
+            const exerciseCheckboxes = this.querySelectorAll('input[name="exercise"]:checked');
+            data.exercise = Array.from(exerciseCheckboxes).map(cb => cb.value);
+            
+            // 顯示載入狀態（可選）
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = '送出中...';
+            submitButton.disabled = true;
+            
+            // 使用fetch發送POST請求到Google App Script API
+            fetch('https://script.google.com/macros/s/AKfycbyb_GkXOiv8-soq6hOUVTHdKRsayFsP56WkA6SOhD9aOxmab5OxXUUbguWFpwnhiVDcjQ/exec', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('網路回應異常');
+                }
+                return response.json();
+            })
+            .then(result => {
+                // 顯示成功訊息
+                document.getElementById('successMessage').style.display = 'block';
+                document.getElementById('errorMessage').style.display = 'none';
+                
+                // 重設表單
+                this.reset();
+                
+                // 重設按鈕狀態
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+                
+                // 3秒後隱藏成功訊息
+                setTimeout(() => {
+                    document.getElementById('successMessage').style.display = 'none';
+                }, 3000);
+            })
+            .catch(error => {
+                console.error('錯誤:', error);
+                
+                // 顯示錯誤訊息
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('successMessage').style.display = 'none';
+                
+                // 重設按鈕狀態
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+            });
+        });
+        
+        // 設置今天為預設日期
+        document.getElementById('date').valueAsDate = new Date();
+
+        // 自動帶入登入患者資料
+        document.addEventListener('DOMContentLoaded', function() {
+            const patientData = sessionStorage.getItem('currentPatient');
+            if (patientData) {
+                try {
+                    const patient = JSON.parse(patientData);
+                    const patientIdInput = document.getElementById('patientId');
+                    const patientNameDisplay = document.getElementById('patientNameDisplay');
+                    
+                    if (patientIdInput) patientIdInput.value = patient.ID || '';
+                    if (patientNameDisplay) patientNameDisplay.textContent = patient.姓名 || '未知患者';
+                } catch (e) {
+                    console.error('解析患者資料失敗:', e);
+                }
+            } else {
+                // 沒有登入資料時顯示提示
+                const patientNameDisplay = document.getElementById('patientNameDisplay');
+                if (patientNameDisplay) {
+                    patientNameDisplay.textContent = '請先登入';
+                    patientNameDisplay.style.color = '#f44336';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

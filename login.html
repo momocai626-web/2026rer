@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>復健紀錄系統 - 登入</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+        }
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .loading-spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-text {
+            color: white;
+            font-size: 16px;
+        }
+        .login-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #777;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+        <div class="login-container">
+            <h2>病患登入</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">病患姓名:</label>
+                    <input type="text" id="username" name="username" required placeholder="請輸入姓名">
+                </div>
+                <div class="form-group">
+                    <label for="password">密碼:</label>
+                    <input type="password" id="password" name="password" required placeholder="請輸入密碼">
+                </div>
+                <button type="submit">登入</button>
+                <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">載入中...</div>
+                </div>
+            </form>
+            <div class="footer">
+                復健紀錄管理系統 v1.0
+            </div>
+        </div>
+
+    <script>
+        function showLoading(show) {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.style.display = show ? 'block' : 'none';
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // 防止表單默認提交
+            
+            // 獲取表單值
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // 發送登入請求到後端API
+            const apiUrl = 'https://script.google.com/macros/s/AKfycbyb_GkXOiv8-soq6hOUVTHdKRsayFsP56WkA6SOhD9aOxmab5OxXUUbguWFpwnhiVDcjQ/exec';
+            
+            showLoading(true);
+            
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    action: 'getPatients',
+                    // 這裡我們先不按ID過濾，取得所有患者再進行比對
+                    // 實際應用中可以改進為直接查詢特定用戶
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                showLoading(false);
+                if (result.success && result.data) {
+                    // 在返回的患者列表中尋找匹配的姓名和密碼
+                    const patients = Array.isArray(result.data) ? result.data : [];
+                    const matchedPatient = patients.find(patient => 
+                        patient.姓名 === username && patient.密碼 === password
+                    );
+                    
+                    if (matchedPatient) {
+                        // 登入成功，儲存患者資料到sessionStorage並導向表單頁面
+                        sessionStorage.setItem('currentPatient', JSON.stringify(matchedPatient));
+                        window.location.href = 'rehab-form.html';
+                    } else {
+                        alert('帳號或密碼錯誤，請重新輸入');
+                    }
+                } else {
+                    alert('伺服器錯誤：' + (result.message || '未知錯誤'));
+                }
+            })
+            .catch(error => {
+                showLoading(false);
+                console.error('登入錯誤:', error);
+                alert('網路錯誤，請稍後再試');
+            });
+        });
+    </script>
+</body>
+</html>

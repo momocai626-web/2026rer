@@ -1,0 +1,6 @@
+﻿階段,提示詞範例,學員練習重點,預期成果
+階段 1：登入頁面,「請生成一個 HTML + CSS 登入頁面，包含病患姓名 (text) 與密碼 (password) 欄位，登入後導向到復健紀錄表單頁面。」,學員練習建立登入介面,病患能輸入帳號密碼，模擬登入
+階段 2：復健紀錄表單,「請生成一個 HTML 表單，包含日期 (date)、疼痛程度 (radio，5分表：無痛、輕微、中度、重度、極度)、完成運動 (checkbox：爬牆、毛巾操、鐘擺)、備註 (textarea)。表單送出後，使用 JavaScript fetch() 將資料 POST 到 Google App Script API。」,學員練習表單設計與 AI 生成,病患能填寫每日復健紀錄
+階段 3：Google Sheets API (CRUD),「請生成一個 Google App Script 程式，建立 patients 工作表（ID、姓名、密碼、病歷號）與 records 工作表（日期、疼痛程度、運動完成度、備註、病患ID）。支援 CRUD：新增患者、查詢患者、更新患者、刪除患者。」,學員練習後端 API 設計,Google Sheets 成為雲端資料庫
+階段 4：前端串接 API,「請生成一個 JavaScript 程式，使用 fetch() 呼叫 Google App Script API，能在前端頁面顯示患者紀錄，並支援新增、查詢、更新、刪除操作。」,學員練習前端與後端串接,前端 APP 與雲端資料互動
+階段 5：後台管理患者帳號,「請生成一個 HTML + JavaScript 後台管理頁面，顯示患者清單表格，支援新增、編輯、刪除患者帳號，並透過 fetch() 呼叫 Google App Script API。」,學員練習後台管理功能,治療師能管理患者帳號與紀錄

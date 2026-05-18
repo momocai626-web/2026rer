@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>後台管理 - 患者帳號</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .admin-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 16px;
+            color: #666;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .tab.active {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .patients-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .patients-table th,
+        .patients-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .patients-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .patients-table tr:hover {
+            background-color: #f1f1f1;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+        .btn-danger {
+            background-color: #f44336;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #d32f2f;
+        }
+        .btn-info {
+            background-color: #2196F3;
+            color: white;
+        }
+        .btn-info:hover {
+            background-color: #0b7dda;
+        }
+        .form-section {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+        .form-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .btn-group {
+            margin-top: 20px;
+        }
+        .message {
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 4px;
+            display: none;
+        }
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #777;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <h2>後台管理 - 患者帳號</h2>
+        
+        <div class="tabs">
+            <button class="tab active" data-tab="patients">患者管理</button>
+            <button class="tab" data-tab="records">紀錄管理</button>
+        </div>
+        
+        <div id="patients-tab" class="tab-content active">
+            <div class="message" id="patients-message"></div>
+            
+            <div class="form-section">
+                <h3>新增患者</h3>
+                <form id="add-patient-form">
+                    <div class="form-group">
+                        <label for="patient-name">姓名:</label>
+                        <input type="text" id="patient-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="patient-password">密碼:</label>
+                        <input type="password" id="patient-password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="patient-record">病歷號:</label>
+                        <input type="text" id="patient-record" name="medicalRecordNumber" required>
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">新增患者</button>
+                        <button type="reset" class="btn btn-info">重設表單</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="form-section">
+                <h3>患者列表</h3>
+                <div id="patients-table-container">
+                    <table class="patients-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>姓名</th>
+                                <th>密碼</th>
+                                <th>病歷號</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patients-table-body">
+                            <!-- 會透過 JavaScript 動態填充 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div id="records-tab" class="tab-content">
+            <div class="message" id="records-message"></div>
+            
+            <div class="form-section">
+                <h3>患者紀錄查詢</h3>
+                <div class="form-group">
+                    <label for="patient-id-filter">患者ID:</label>
+                    <input type="text" id="patient-id-filter" placeholder="輸入患者ID查詢紀錄 (留空顯示所有紀錄)">
+                </div>
+                <div class="btn-group">
+                    <button id="filter-records-btn" class="btn btn-primary">查詢紀錄</button>
+                    <button id="reset-filter-btn" class="btn btn-info">重設查詢</button>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3>紀錄列表</h3>
+                <div id="records-table-container">
+                    <table class="patients-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>日期</th>
+                                <th>疼痛程度</th>
+                                <th>完成運動</th>
+                                <th>備註</th>
+                                <th>病患ID</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="records-table-body">
+                            <!-- 會透過 JavaScript 動態填充 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            復健紀錄管理系統 - 後台管理 v1.0
+        </div>
+    </div>
+
+    <script>
+        // Configuration - Replace with your actual Google App Script Web App URL
+        const API_URL = 'https://script.google.com/macros/s/AKfycbyb_GkXOiv8-soq6hOUVTHdKRsayFsP56WkA6SOhD9aOxmab5OxXUUbguWFpwnhiVDcjQ/exec';
+        
+        // DOM Elements
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const patientsMessage = document.getElementById('patients-message');
+        const recordsMessage = document.getElementById('records-message');
+        const addPatientForm = document.getElementById('add-patient-form');
+        const patientsTableBody = document.getElementById('patients-table-body');
+        const patientIdFilter = document.getElementById('patient-id-filter');
+        const filterRecordsBtn = document.getElementById('filter-records-btn');
+        const resetFilterBtn = document.getElementById('reset-filter-btn');
+        const recordsTableBody = document.getElementById('records-table-body');
+        
+        // State
+        let patients = [];
+        let records = [];
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPatients();
+            loadRecords(); // Load all records by default
+            setupEventListeners();
+        });
+        
+        // Event Listeners
+        function setupEventListeners() {
+            // Tab switching
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Deactivate all tabs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Activate clicked tab
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab') + '-tab';
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // Add patient form
+            addPatientForm.addEventListener('submit', handleAddPatientSubmit);
+            
+            // Filter records
+            filterRecordsBtn.addEventListener('click', () => {
+                const patientId = patientIdFilter.value.trim();
+                loadRecords(patientId || null);
+            });
+            
+            resetFilterBtn.addEventListener('click', () => {
+                patientIdFilter.value = '';
+                loadRecords(); // Load all records
+            });
+        }
+        
+        // API Functions
+        async function apiRequest(action, data = null, id = null) {
+            try {
+                const payload = { action };
+                if (data !== null) payload.data = data;
+                if (id !== null) payload.id = id;
+
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/plain',   // 使用 text/plain 可避開 Google Apps Script 的 CORS 問題
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                // 先以文字方式讀取，再嘗試轉成 JSON（Google Apps Script 有時回傳格式不標準）
+                const text = await response.text();
+                try {
+                    return JSON.parse(text);
+                } catch (e) {
+                    console.warn('伺服器回應不是標準 JSON:', text);
+                    return { success: false, message: '伺服器回應格式錯誤' };
+                }
+            } catch (error) {
+                console.error('API Error:', error);
+                return { success: false, message: '網路錯誤，請稍後再試' };
+            }
+        }
+        
+        // Patients CRUD
+        async function loadPatients() {
+            showMessage(patientsMessage, '載入中...', 'info');
+            const result = await apiRequest('getPatients');
+            
+            if (result.success) {
+                patients = result.data || [];
+                renderPatientsTable();
+                showMessage(patientsMessage, `載入了 ${patients.length} 位患者`, 'success');
+            } else {
+                showMessage(patientsMessage, result.message, 'error');
+            }
+        }
+        
+        async function handleAddPatientSubmit(e) {
+            e.preventDefault();
+            
+            const patientData = {
+                name: document.getElementById('patient-name').value.trim(),
+                password: document.getElementById('patient-password').value,
+                medicalRecordNumber: document.getElementById('patient-record').value.trim()
+            };
+            
+            // Basic validation
+            if (!patientData.name || !patientData.password || !patientData.medicalRecordNumber) {
+                showMessage(patientsMessage, '請填寫所有欄位', 'error');
+                return;
+            }
+            
+            showMessage(patientsMessage, '新增中...', 'info');
+            const result = await apiRequest('createPatient', patientData);
+            
+            if (result.success) {
+                showMessage(patientsMessage, '患者新增成功！', 'success');
+                addPatientForm.reset();
+                loadPatients(); // Refresh list
+            } else {
+                showMessage(patientsMessage, result.message, 'error');
+            }
+        }
+        
+        async function deletePatient(id) {
+            if (!confirm('確定要刪除此患者嗎？此操作無法復原。')) {
+                return;
+            }
+            
+            showMessage(patientsMessage, '刪除中...', 'info');
+            const result = await apiRequest('deletePatient', null, id);
+            
+            if (result.success) {
+                showMessage(patientsMessage, '患者已刪除', 'success');
+                loadPatients(); // Refresh list
+            } else {
+                showMessage(patientsMessage, result.message, 'error');
+            }
+        }
+        
+        // Records CRUD
+        async function loadRecords(patientId = null) {
+            showMessage(recordsMessage, '載入中...', 'info');
+            const result = await apiRequest('getRecords', null, patientId);
+            
+            if (result.success) {
+                records = result.data || [];
+                renderRecordsTable(patientId);
+                const patientIdText = patientId ? ` (患者ID: ${patientId})` : '';
+                showMessage(recordsMessage, `載入了 ${records.length} 筆紀錄${patientIdText}`, 'success');
+            } else {
+                showMessage(recordsMessage, result.message, 'error');
+            }
+        }
+        
+        async function deleteRecord(id) {
+            if (!confirm('確定要刪除此紀錄嗎？此操作無法復原。')) {
+                return;
+            }
+            
+            showMessage(recordsMessage, '刪除中...', 'info');
+            const result = await apiRequest('deleteRecord', null, id);
+            
+            if (result.success) {
+                showMessage(recordsMessage, '紀錄已刪除', 'success');
+                loadRecords(patientIdFilter.value.trim() || null); // Refresh with current filter
+            } else {
+                showMessage(recordsMessage, result.message, 'error');
+            }
+        }
+        
+        // Render Functions
+        function renderPatientsTable() {
+            if (patients.length === 0) {
+                patientsTableBody.innerHTML = '<tr><td colspan="5">目前沒有患者資料</td></tr>';
+                return;
+            }
+            
+            patientsTableBody.innerHTML = patients.map(patient => `
+                <tr>
+                    <td>${patient.ID || ''}</td>
+                    <td>${patient.姓名 || ''}</td>
+                    <td>${patient.密碼 || ''}</td>
+                    <td>${patient.病歷號 || ''}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="deletePatient('${patient.ID}')">刪除</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function renderRecordsTable(filteredPatientId = null) {
+            if (records.length === 0) {
+                recordsTableBody.innerHTML = '<tr><td colspan="7">目前沒有紀錄資料</td></tr>';
+                return;
+            }
+
+            recordsTableBody.innerHTML = records.map(record => {
+                // 支援「完成運動」或「運動完成度」兩種欄位名稱
+                const exercise = record['完成運動'] || record['運動完成度'] || '';
+                return `
+                    <tr>
+                        <td>${record[''] || ''}</td>
+                        <td>${record.日期 || ''}</td>
+                        <td>${record.疼痛程度 || ''}</td>
+                        <td>${exercise}</td>
+                        <td>${record.備註 || ''}</td>
+                        <td>${record.病患ID || ''}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="deleteRecord('${record['']}')">刪除</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        // Helper Functions
+        function showMessage(element, message, type = 'info') {
+            element.textContent = message;
+            element.className = 'message';
+            if (type !== 'info') {
+                element.classList.add(type);
+            }
+            element.style.display = 'block';
+            
+            // Auto-hide after 5 seconds for success/error messages
+            if (type === 'success' || type === 'error') {
+                setTimeout(() => {
+                    element.style.display = 'none';
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+</html>
