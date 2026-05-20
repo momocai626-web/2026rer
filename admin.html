@@ -3,48 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>臨床管理後台 - 復健生理回饋系統 | 臺大醫院雲林分院 斗六院區 復健部</title>
+    <title>後台管理 - 復健紀錄系統</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- 引入 Bootstrap Icons 5.3+ -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/components.js"></script>
 </head>
 <body>
     <div class="admin-container">
-        <!-- Header -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
-            <h2 style="margin:0; text-align:left; display: flex; align-items: center; gap: 0.5rem; font-size: 1.5rem;">
-                <i class="bi bi-hospital-fill text-primary"></i> 斗六台大醫院 復健部 - 臨床管理後台
-            </h2>
-            <div style="display: flex; gap: 1rem; align-items: center;">
-                <span id="adminName" style="color: var(--text-secondary); font-size: 0.875rem; font-weight:600; display: inline-flex; align-items: center; gap: 0.25rem;">
-                    <i class="bi bi-person-workspace text-primary"></i> 管理員
-                </span>
-                <button onclick="logout()" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.825rem; display: inline-flex; align-items: center; gap: 0.25rem;">
-                    <i class="bi bi-box-arrow-right"></i> 登出
-                </button>
-            </div>
-        </div>
-        
-        <!-- 二元化 Tabs -->
-        <div class="tabs">
-            <button class="tab active" data-tab="account-mgmt" style="display: inline-flex; align-items: center; gap: 0.35rem;">
-                <i class="bi bi-people-fill"></i> 患者帳號管理
-            </button>
-            <button class="tab" data-tab="data-analysis" style="display: inline-flex; align-items: center; gap: 0.35rem;">
-                <i class="bi bi-bar-chart-line-fill"></i> 復健數據分析
-            </button>
-        </div>
-        
-        <!-- 分頁一：帳號管理 -->
+        <div id="admin-header-component"></div>
+        <div id="admin-tabs-component"></div>
+
         <div id="account-mgmt-tab" class="tab-content active">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-                <h3 style="margin:0; display: inline-flex; align-items: center; gap: 0.35rem;"><i class="bi bi-list-task text-primary"></i> 病患帳號名單</h3>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; gap: 1rem; flex-wrap: wrap;">
+                <h3 style="margin:0; display: inline-flex; align-items: center; gap: 0.35rem;">
+                    <i class="bi bi-list-task text-primary"></i> 帳號管理
+                </h3>
                 <button class="btn btn-primary" onclick="openAddModal()" style="display: inline-flex; align-items: center; gap: 0.35rem;">
-                    <i class="bi bi-person-plus-fill"></i> <span>新增患者</span>
+                    <i class="bi bi-person-plus-fill"></i> <span>新增帳號</span>
                 </button>
             </div>
+
             <div class="table-wrapper">
                 <table class="patients-table">
                     <thead>
@@ -53,23 +33,22 @@
                             <th>姓名</th>
                             <th>病歷號</th>
                             <th>角色</th>
-                            <th style="text-align: right;">功能連動</th>
+                            <th style="text-align: right;">操作</th>
                         </tr>
                     </thead>
                     <tbody id="patients-table-body"></tbody>
                 </table>
             </div>
         </div>
-        
-        <!-- 分頁二：數據分析 (整合全院與個人) -->
+
         <div id="data-analysis-tab" class="tab-content">
-            <div style="background: var(--primary-light); padding: 1.5rem; border-radius: var(--radius-md); margin-bottom: 2rem; border: 1px solid var(--primary-color); display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
-                <div style="display: flex; align-items: center; gap: 1rem; flex: 1;">
-                    <label style="font-weight:700; color:var(--primary-color); white-space:nowrap; display: inline-flex; align-items: center; gap: 0.25rem;">
-                        <i class="bi bi-search"></i> 分析對象：
+            <div style="background: var(--primary-light); padding: 1.5rem; border-radius: var(--radius-md); margin-bottom: 2rem; border: 1px solid var(--primary-color); display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 1rem; flex: 1; min-width: 260px;">
+                    <label for="analysis-patient-select" style="font-weight:700; color:var(--primary-color); white-space:nowrap; display: inline-flex; align-items: center; gap: 0.25rem;">
+                        <i class="bi bi-search"></i> 選擇病患
                     </label>
                     <select id="analysis-patient-select" style="max-width:350px; font-weight:600;">
-                        <option value="all">-- 全院趨勢統計 (平均值) --</option>
+                        <option value="all">全部病患平均</option>
                     </select>
                 </div>
                 <button id="refresh-analysis-btn" class="btn btn-outline" style="padding:0.4rem 1rem; font-size:0.875rem; display: inline-flex; align-items: center; gap: 0.35rem;">
@@ -78,18 +57,17 @@
             </div>
 
             <div class="card" style="padding: 2rem; margin-bottom: 2rem;">
-                <h3 id="chartTitle" style="display: inline-flex; align-items: center; gap: 0.35rem;">數據趨勢圖</h3>
+                <h3 id="chartTitle" style="display: inline-flex; align-items: center; gap: 0.35rem;">復健數據</h3>
                 <div style="width: 100%; height: 350px;">
                     <canvas id="analysisChart"></canvas>
                 </div>
             </div>
 
-            <!-- 明細區塊：僅在選擇特定病患時顯示 -->
             <div id="individual-detail-section" style="display:none;">
                 <div class="table-wrapper">
                     <div style="padding:1rem; background:#f8fafc; border-bottom:1px solid var(--border-color);">
-                        <h3 style="margin:0; font-size:1rem; display: inline-flex; align-items: center; gap: 0.35rem;" id="detailSectionTitle">
-                            <i class="bi bi-file-earmark-text-fill text-primary"></i> 該員復健歷史明細
+                        <h3 style="margin:0; font-size:1rem; display: inline-flex; align-items: center; gap: 0.35rem;">
+                            <i class="bi bi-file-earmark-text-fill text-primary"></i> 個別紀錄
                         </h3>
                     </div>
                     <table class="patients-table">
@@ -99,7 +77,7 @@
                                 <th>疼痛程度</th>
                                 <th>完成運動</th>
                                 <th>備註</th>
-                                <th style="text-align: right;">管理</th>
+                                <th style="text-align: right;">操作</th>
                             </tr>
                         </thead>
                         <tbody id="analysis-records-body"></tbody>
@@ -107,32 +85,29 @@
                 </div>
             </div>
         </div>
-        
-        <div class="footer">
-            <p>臺大醫院雲林分院 斗六院區 復健部 V1.0.0</p>
-        </div>
 
-        <!-- Modals & Toasts (Consistent) -->
-        <div id="toastContainer" class="toast-container"></div>
+        <div id="admin-footer-component"></div>
+        <div id="toast-container-component"></div>
+
         <div id="patientModal" class="modal" style="display:none;">
             <div class="modal-content">
                 <span class="close" onclick="closeModal()" style="position: absolute; top: 1rem; right: 1.5rem; font-size: 1.5rem; cursor: pointer;">&times;</span>
                 <h3 id="modalTitle" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--primary-color);">帳號資料</h3>
                 <form id="patientForm">
                     <input type="hidden" id="editPatientId">
-                    <div class="form-group"><label>姓名</label><input type="text" id="modalName" required></div>
-                    <div class="form-group"><label>登入密碼</label><input type="password" id="modalPassword" required></div>
-                    <div class="form-group"><label>病歷號碼</label><input type="text" id="modalRecord"></div>
+                    <div class="form-group"><label for="modalName">姓名</label><input type="text" id="modalName" required></div>
+                    <div class="form-group"><label for="modalPassword">密碼</label><input type="password" id="modalPassword" required></div>
+                    <div class="form-group"><label for="modalRecord">病歷號</label><input type="text" id="modalRecord"></div>
                     <div class="form-group">
-                        <label>角色權限</label>
+                        <label for="modalRole">角色</label>
                         <select id="modalRole">
-                            <option value="patient">病患 (patient)</option>
-                            <option value="admin">管理員 (admin)</option>
+                            <option value="patient">病患</option>
+                            <option value="admin">管理員</option>
                         </select>
                     </div>
                     <div style="margin-top:2rem; display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
-                        <button type="submit" class="btn btn-primary" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;"><i class="bi bi-check-lg"></i> 儲存資料</button>
-                        <button type="button" class="btn btn-outline" onclick="closeModal()" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;"><i class="bi bi-x-lg"></i> 取消</button>
+                        <button type="submit" class="btn btn-primary" style="display: inline-flex; align-items:center; justify-content:center; gap:0.35rem;"><i class="bi bi-check-lg"></i> 儲存</button>
+                        <button type="button" class="btn btn-outline" onclick="closeModal()" style="display: inline-flex; align-items:center; justify-content:center; gap:0.35rem;"><i class="bi bi-x-lg"></i> 取消</button>
                     </div>
                 </form>
             </div>
@@ -141,85 +116,135 @@
 
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbyb_GkXOiv8-soq6hOUVTHdKRsayFsP56WkA6SOhD9aOxmab5OxXUUbguWFpwnhiVDcjQ/exec';
-        let patients = [], records = [];
-        let currentChart = null;
         const painMap = { '無痛': 0, '輕微': 1, '中度': 2, '重度': 3, '極度': 4 };
+        const painLabels = ['無痛', '輕微', '中度', '重度', '極度'];
 
-        document.addEventListener('DOMContentLoaded', () => {
+        let patients = [];
+        let records = [];
+        let currentChart = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
             const adminData = sessionStorage.getItem('currentPatient');
-            if (!adminData || JSON.parse(adminData).角色 !== 'admin') { window.location.href = 'index.html'; return; }
-            document.getElementById('adminName').textContent = `管理員: ${JSON.parse(adminData).姓名}`;
-            init();
+            if (!adminData) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const admin = JSON.parse(adminData);
+            if (admin['角色'] !== 'admin') {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            initComponents({
+                header: false,
+                footer: false,
+                legalModal: false,
+                adminHeader: true,
+                adminHeaderOptions: { adminName: `管理員：${admin['姓名'] || admin.ID}` },
+                adminTabs: true,
+                adminFooter: true,
+                toastContainer: true
+            });
+
+            setupEventListeners();
+            await init();
         });
 
         async function init() {
             await Promise.all([loadPatients(), loadRecords()]);
-            setupEventListeners();
+            runAnalysis('all');
         }
 
         function setupEventListeners() {
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.addEventListener('click', () => {
-                    document.querySelectorAll('.tab, .tab-content').forEach(el => el.classList.remove('active'));
+                    document.querySelectorAll('.tab, .tab-content').forEach(item => item.classList.remove('active'));
                     tab.classList.add('active');
-                    const tabName = tab.getAttribute('data-tab');
-                    document.getElementById(`${tabName}-tab`).classList.add('active');
-                    if (tabName === 'data-analysis') runAnalysis(document.getElementById('analysis-patient-select').value);
+                    document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
+                    if (tab.dataset.tab === 'data-analysis') {
+                        runAnalysis(document.getElementById('analysis-patient-select').value);
+                    }
                 });
             });
 
-            document.getElementById('analysis-patient-select').addEventListener('change', (e) => runAnalysis(e.target.value));
-            document.getElementById('refresh-analysis-btn').addEventListener('click', async () => { 
-                showToast('正在更新數據...', 'info');
-                await loadRecords(); 
-                runAnalysis(document.getElementById('analysis-patient-select').value); 
+            document.getElementById('analysis-patient-select').addEventListener('change', event => runAnalysis(event.target.value));
+            document.getElementById('refresh-analysis-btn').addEventListener('click', async () => {
+                await Promise.all([loadPatients(), loadRecords()]);
+                runAnalysis(document.getElementById('analysis-patient-select').value);
+                showToast('資料已更新');
             });
+
+            document.getElementById('patientForm').addEventListener('submit', savePatient);
         }
 
         async function apiRequest(action, data = null, id = null) {
             try {
-                const res = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action, data, id }) });
-                return await res.json();
-            } catch (e) { return { success: false, message: '網路錯誤' }; }
-        }
-
-        async function loadPatients() {
-            const res = await apiRequest('getPatients');
-            if (res.success) {
-                patients = res.data || [];
-                renderPatientsTable();
-                populateAnalysisSelect();
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({ action, data, id })
+                });
+                return await response.json();
+            } catch (error) {
+                console.error(error);
+                return { success: false, message: '無法連線到後端' };
             }
         }
 
+        async function loadPatients() {
+            const result = await apiRequest('getPatients');
+            if (!result.success) {
+                showToast(result.message || '讀取帳號失敗', 'error');
+                return;
+            }
+
+            patients = result.data || [];
+            renderPatientsTable();
+            populateAnalysisSelect();
+        }
+
         async function loadRecords() {
-            const res = await apiRequest('getRecords');
-            if (res.success) records = res.data || [];
+            const result = await apiRequest('getRecords');
+            if (!result.success) {
+                showToast(result.message || '讀取紀錄失敗', 'error');
+                return;
+            }
+            records = result.data || [];
         }
 
         function populateAnalysisSelect() {
             const select = document.getElementById('analysis-patient-select');
-            const current = select.value;
-            select.innerHTML = '<option value="all">-- 全院趨勢統計 (平均值) --</option>';
-            patients.forEach(p => {
-                const opt = document.createElement('option');
-                opt.value = p.ID; opt.textContent = `${p.姓名} (${p.病歷號 || '無病歷'})`;
-                select.appendChild(opt);
+            const currentValue = select.value || 'all';
+            select.innerHTML = '<option value="all">全部病患平均</option>';
+
+            patients.filter(item => item['角色'] !== 'admin').forEach(patient => {
+                const option = document.createElement('option');
+                option.value = patient.ID;
+                option.textContent = `${patient['姓名'] || '未命名'}${patient['病歷號'] ? ` (${patient['病歷號']})` : ''}`;
+                select.appendChild(option);
             });
-            select.value = current || 'all';
+
+            select.value = Array.from(select.options).some(option => option.value === currentValue) ? currentValue : 'all';
         }
 
         function renderPatientsTable() {
-            document.getElementById('patients-table-body').innerHTML = patients.map(p => `
+            const tbody = document.getElementById('patients-table-body');
+            if (patients.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">目前沒有帳號資料</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = patients.map(patient => `
                 <tr>
-                    <td><code>${p.ID}</code></td>
-                    <td><strong>${p.姓名}</strong></td>
-                    <td>${p.病歷號 || '-'}</td>
-                    <td><span class="badge ${p.角色 === 'admin' ? 'btn-danger' : 'btn-info'}" style="padding:2px 8px; border-radius:10px; font-size:11px;">${p.角色}</span></td>
-                    <td style="text-align: right; white-space: nowrap;">
-                        <button class="btn btn-primary" style="padding:4px 10px; font-size:11px; display:inline-flex; align-items:center; gap:0.25rem;" onclick="jumpToAnalysis('${p.ID}')"><i class="bi bi-bar-chart-line-fill"></i> 數據分析</button>
-                        <button class="btn btn-outline" style="padding:4px 10px; font-size:11px; display:inline-flex; align-items:center; gap:0.25rem;" onclick='openEditModal(${JSON.stringify(p)})'><i class="bi bi-pencil-fill"></i> 編輯</button>
-                        <button class="btn btn-danger" style="padding:4px 10px; font-size:11px; border:none; display:inline-flex; align-items:center; gap:0.25rem;" onclick="deletePatient('${p.ID}')"><i class="bi bi-trash-fill"></i> 刪除</button>
+                    <td data-label="ID"><code>${escapeHtml(patient.ID || '')}</code></td>
+                    <td data-label="姓名"><strong>${escapeHtml(patient['姓名'] || '')}</strong></td>
+                    <td data-label="病歷號">${escapeHtml(patient['病歷號'] || '-')}</td>
+                    <td data-label="角色"><span class="badge ${patient['角色'] === 'admin' ? 'btn-danger' : 'btn-info'}" style="padding:2px 8px; border-radius:10px; font-size:11px;">${escapeHtml(patient['角色'] || 'patient')}</span></td>
+                    <td data-label="操作" style="text-align: right; white-space: nowrap;">
+                        <button class="btn btn-primary" style="padding:4px 10px; font-size:11px; display:inline-flex; align-items:center; gap:0.25rem;" onclick="jumpToAnalysis('${escapeAttr(patient.ID || '')}')"><i class="bi bi-bar-chart-line-fill"></i> 分析</button>
+                        <button class="btn btn-outline" style="padding:4px 10px; font-size:11px; display:inline-flex; align-items:center; gap:0.25rem;" data-edit-id="${escapeAttr(patient.ID || '')}" onclick="openEditModalById(this.dataset.editId)"><i class="bi bi-pencil-fill"></i> 編輯</button>
+                        <button class="btn btn-danger" style="padding:4px 10px; font-size:11px; border:none; display:inline-flex; align-items:center; gap:0.25rem;" onclick="deletePatient('${escapeAttr(patient.ID || '')}')"><i class="bi bi-trash-fill"></i> 刪除</button>
                     </td>
                 </tr>
             `).join('');
@@ -231,117 +256,217 @@
             runAnalysis(id);
         }
 
-        // --- Core Analysis Logic (The "Smart" part) ---
         function runAnalysis(targetId) {
             const ctx = document.getElementById('analysisChart').getContext('2d');
             const title = document.getElementById('chartTitle');
             const detailSection = document.getElementById('individual-detail-section');
             const tbody = document.getElementById('analysis-records-body');
-            
+
             if (currentChart) currentChart.destroy();
-            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
             if (records.length === 0) {
-                title.textContent = '尚無紀錄數據';
+                title.textContent = '目前沒有復健紀錄';
+                detailSection.style.display = 'none';
+                currentChart = new Chart(ctx, { type: 'bar', data: { labels: [], datasets: [] }, options: { responsive: true, maintainAspectRatio: false } });
                 return;
             }
 
             if (targetId === 'all') {
-                // 全院模式
-                title.innerHTML = '<i class="bi bi-bar-chart-line-fill text-primary" style="margin-right: 0.35rem;"></i> 全院復健疼痛趨勢 (平均值)';
+                title.innerHTML = '<i class="bi bi-bar-chart-line-fill text-primary"></i> 全部病患平均疼痛趨勢';
                 detailSection.style.display = 'none';
-                
+
                 const grouped = {};
-                records.forEach(r => {
-                    if (!r.日期) return;
-                    const d = new Date(r.日期).toLocaleDateString();
-                    if (!grouped[d]) grouped[d] = { total: 0, count: 0 };
-                    const score = painMap[r.疼痛程度];
-                    if (score !== undefined) { grouped[d].total += score; grouped[d].count += 1; }
+                records.forEach(record => {
+                    if (!record['日期']) return;
+                    const dateKey = formatDate(record['日期']);
+                    const score = painMap[record['疼痛程度']];
+                    if (score === undefined) return;
+                    if (!grouped[dateKey]) grouped[dateKey] = { total: 0, count: 0 };
+                    grouped[dateKey].total += score;
+                    grouped[dateKey].count += 1;
                 });
 
-                const data = Object.keys(grouped).sort((a,b) => new Date(a)-new Date(b)).map(d => ({ x: d, y: (grouped[d].total / grouped[d].count).toFixed(1) }));
+                const chartData = Object.keys(grouped).sort().map(date => ({
+                    date,
+                    average: Number((grouped[date].total / grouped[date].count).toFixed(1))
+                }));
 
                 currentChart = new Chart(ctx, {
                     type: 'bar',
                     data: {
-                        labels: data.map(d => d.x),
-                        datasets: [{ label: '平均疼痛指數', data: data.map(d => d.y), backgroundColor: 'rgba(13, 148, 136, 0.4)', borderColor: '#0d9488', borderWidth: 2 }]
+                        labels: chartData.map(item => item.date),
+                        datasets: [{
+                            label: '平均疼痛分數',
+                            data: chartData.map(item => item.average),
+                            backgroundColor: 'rgba(13, 148, 136, 0.4)',
+                            borderColor: '#0d9488',
+                            borderWidth: 2
+                        }]
                     },
-                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 4, title: { display: true, text: '疼痛等級 (0-4)' } } } }
+                    options: getChartOptions()
                 });
+                return;
+            }
 
-            } else {
-                // 個案模式
-                const patient = patients.find(p => p.ID === targetId);
-                title.innerHTML = `<i class="bi bi-activity text-primary" style="margin-right: 0.35rem;"></i> 復健進度曲線 - ${patient ? patient.姓名 : '查無此人'}`;
-                detailSection.style.display = 'block';
+            const patient = patients.find(item => String(item.ID) === String(targetId));
+            const individualRecords = records
+                .filter(record => String(record['病患ID']) === String(targetId))
+                .sort((a, b) => new Date(a['日期']) - new Date(b['日期']));
 
-                const individualRecords = records.filter(r => r.病患ID == targetId).sort((a,b) => new Date(a.日期)-new Date(b.日期));
+            title.innerHTML = `<i class="bi bi-activity text-primary"></i> ${escapeHtml(patient ? patient['姓名'] : '病患')} 疼痛趨勢`;
+            detailSection.style.display = 'block';
 
-                if (individualRecords.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">此病患尚無歷史紀錄</td></tr>';
-                    // 畫一個空白圖表
-                    currentChart = new Chart(ctx, { type: 'line', data: { labels: [], datasets: [] }, options: { responsive: true, maintainAspectRatio: false } });
-                } else {
-                    currentChart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: individualRecords.map(r => new Date(r.日期).toLocaleDateString()),
-                            datasets: [{ label: '疼痛指數', data: individualRecords.map(r => painMap[r.疼痛程度]), borderColor: '#0284c7', backgroundColor: 'rgba(2, 132, 199, 0.1)', fill: true, tension: 0.3, pointRadius: 5 }]
-                        },
-                        options: { 
-                            responsive: true, 
-                            maintainAspectRatio: false, 
-                            scales: { y: { min: 0, max: 4, ticks: { callback: v => Object.keys(painMap).find(k => painMap[k] === v) } } }
-                        }
-                    });
+            if (individualRecords.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">此病患尚無復健紀錄</td></tr>';
+                currentChart = new Chart(ctx, { type: 'line', data: { labels: [], datasets: [] }, options: getChartOptions() });
+                return;
+            }
 
-                    tbody.innerHTML = individualRecords.map(r => `
-                        <tr>
-                            <td>${new Date(r.日期).toLocaleDateString()}</td>
-                            <td><span style="font-weight:700; color:var(--secondary-color);">${r.疼痛程度}</span></td>
-                            <td>${r['完成運動'] || '-'}</td>
-                            <td><small>${r.備註 || ''}</small></td>
-                            <td style="text-align:right;"><button class="btn btn-danger" style="padding:2px 8px; font-size:10px; border:none; display:inline-flex; align-items:center; gap:0.25rem;" onclick="deleteRecord('${r['']}')"><i class="bi bi-trash-fill"></i> 刪除</button></td>
-                        </tr>
-                    `).reverse().join('');
+            currentChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: individualRecords.map(record => formatDate(record['日期'])),
+                    datasets: [{
+                        label: '疼痛分數',
+                        data: individualRecords.map(record => painMap[record['疼痛程度']]),
+                        borderColor: '#0284c7',
+                        backgroundColor: 'rgba(2, 132, 199, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 5
+                    }]
+                },
+                options: getChartOptions()
+            });
+
+            tbody.innerHTML = individualRecords.slice().reverse().map(record => `
+                <tr>
+                    <td data-label="日期">${escapeHtml(formatDate(record['日期']))}</td>
+                    <td data-label="疼痛程度"><span style="font-weight:700; color:var(--secondary-color);">${escapeHtml(record['疼痛程度'] || '-')}</span></td>
+                    <td data-label="完成運動">${escapeHtml(record['完成運動'] || '-')}</td>
+                    <td data-label="備註"><small>${escapeHtml(record['備註'] || '')}</small></td>
+                    <td data-label="操作" style="text-align:right;">
+                        <button class="btn btn-danger" style="padding:2px 8px; font-size:10px; border:none; display:inline-flex; align-items:center; gap:0.25rem;" onclick="deleteRecord('${escapeAttr(record.recordId || record._row)}')"><i class="bi bi-trash-fill"></i> 刪除</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getChartOptions() {
+            return {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        min: 0,
+                        max: 4,
+                        ticks: { callback: value => painLabels[value] || value },
+                        title: { display: true, text: '疼痛程度' }
+                    }
                 }
+            };
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').innerHTML = '<i class="bi bi-person-fill-add"></i> 新增帳號';
+            document.getElementById('patientForm').reset();
+            document.getElementById('editPatientId').value = '';
+            document.getElementById('modalRole').value = 'patient';
+            document.getElementById('patientModal').style.display = 'flex';
+        }
+
+        function openEditModalById(id) {
+            const patient = patients.find(item => String(item.ID) === String(id));
+            if (!patient) return;
+            openEditModal(patient);
+        }
+
+        function openEditModal(patient) {
+            document.getElementById('modalTitle').innerHTML = '<i class="bi bi-pencil-square"></i> 編輯帳號';
+            document.getElementById('editPatientId').value = patient.ID || '';
+            document.getElementById('modalName').value = patient['姓名'] || '';
+            document.getElementById('modalPassword').value = patient['密碼'] || '';
+            document.getElementById('modalRecord').value = patient['病歷號'] || '';
+            document.getElementById('modalRole').value = patient['角色'] || 'patient';
+            document.getElementById('patientModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('patientModal').style.display = 'none';
+        }
+
+        async function savePatient(event) {
+            event.preventDefault();
+            const id = document.getElementById('editPatientId').value;
+            const data = {
+                name: document.getElementById('modalName').value.trim(),
+                password: document.getElementById('modalPassword').value,
+                medicalRecordNumber: document.getElementById('modalRecord').value.trim(),
+                role: document.getElementById('modalRole').value
+            };
+
+            const result = id ? await apiRequest('updatePatient', data, id) : await apiRequest('createPatient', data);
+            if (result.success) {
+                showToast(result.message || '已儲存');
+                closeModal();
+                await loadPatients();
+            } else {
+                showToast(result.message || '儲存失敗', 'error');
             }
         }
 
         async function deletePatient(id) {
-            if (!confirm('確定刪除此患者帳號？')) return;
-            const res = await apiRequest('deletePatient', null, id);
-            if (res.success) { showToast('帳號已刪除'); loadPatients(); }
+            if (!confirm('確定要刪除此帳號？')) return;
+            const result = await apiRequest('deletePatient', null, id);
+            if (result.success) {
+                showToast('帳號已刪除');
+                await loadPatients();
+            } else {
+                showToast(result.message || '刪除失敗', 'error');
+            }
         }
 
         async function deleteRecord(rowId) {
-            if (!confirm('確定刪除此筆復健紀錄？')) return;
-            const res = await apiRequest('deleteRecord', null, rowId);
-            if (res.success) { showToast('紀錄已刪除'); await loadRecords(); runAnalysis(document.getElementById('analysis-patient-select').value); }
+            if (!confirm('確定要刪除此筆紀錄？')) return;
+            const result = await apiRequest('deleteRecord', null, rowId);
+            if (result.success) {
+                showToast('紀錄已刪除');
+                await loadRecords();
+                runAnalysis(document.getElementById('analysis-patient-select').value);
+            } else {
+                showToast(result.message || '刪除失敗', 'error');
+            }
         }
 
-        // UI Helpers
-        function showToast(m, t='success') {
-            const c = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${t}`; toast.textContent = m;
-            c.appendChild(toast);
-            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 400); }, 3000);
+        function logout() {
+            sessionStorage.removeItem('currentPatient');
+            window.location.href = 'index.html';
         }
-        function openAddModal() { document.getElementById('modalTitle').innerHTML = '<i class="bi bi-person-fill-add" style="margin-right: 0.35rem;"></i> 新增病患帳號'; document.getElementById('patientForm').reset(); document.getElementById('editPatientId').value = ''; document.getElementById('patientModal').style.display = 'flex'; }
-        function openEditModal(p) { document.getElementById('modalTitle').innerHTML = '<i class="bi bi-pencil-square" style="margin-right: 0.35rem;"></i> 編輯資料'; document.getElementById('editPatientId').value = p.ID; document.getElementById('modalName').value = p.姓名; document.getElementById('modalPassword').value = p.密碼; document.getElementById('modalRecord').value = p.病歷號; document.getElementById('modalRole').value = p.角色; document.getElementById('patientModal').style.display = 'flex'; }
-        function closeModal() { document.getElementById('patientModal').style.display = 'none'; }
-        function logout() { sessionStorage.removeItem('currentPatient'); window.location.href = 'index.html'; }
 
-        document.getElementById('patientForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const id = document.getElementById('editPatientId').value;
-            const data = { name: document.getElementById('modalName').value.trim(), password: document.getElementById('modalPassword').value, medicalRecordNumber: document.getElementById('modalRecord').value.trim(), role: document.getElementById('modalRole').value };
-            const res = id ? await apiRequest('updatePatient', data, id) : await apiRequest('createPatient', data);
-            if (res.success) { showToast(res.message); closeModal(); loadPatients(); }
-        });
+        function formatDate(value) {
+            if (!value) return '';
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return String(value).slice(0, 10);
+            // 使用本地時間避免 UTC 轉換造成日期偏移（台灣 UTC+8）
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, char => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[char]));
+        }
+
+        function escapeAttr(value) {
+            return escapeHtml(value).replace(/`/g, '&#96;');
+        }
     </script>
 </body>
 </html>

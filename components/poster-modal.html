@@ -1,0 +1,10 @@
+<!-- 海報燈箱 Modal -->
+<div id="posterModal" class="modal poster-modal" onclick="closePosterModal()">
+    <div class="poster-modal-inner" onclick="event.stopPropagation()">
+        <button class="poster-close-btn" onclick="closePosterModal()">
+            <i class="bi bi-x-lg"></i>
+        </button>
+        <p id="posterModalTitle" style="text-align:center; font-weight:600; margin-bottom:1rem; color:var(--primary-color); font-size:1rem;"></p>
+        <img id="posterModalImg" src="" alt="衛教海報" style="max-width:100%; max-height:80vh; border-radius:0.75rem; display:block; margin:0 auto;">
+    </div>
+</div>

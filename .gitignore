@@ -11,3 +11,11 @@ node_modules/
 # OS
 .DS_Store
 Thumbs.db
+
+# Kiro / Agent tools
+.agents/
+skills-lock.json
+skills_list.txt
+
+# Temp / build artifacts
+temp_huashu_design/

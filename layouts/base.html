@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><!-- PAGE_TITLE -->每日復健紀錄系統 | 臺大醫院雲林分院 斗六院區 復健部<!-- /PAGE_TITLE --></title>
+    <link rel="stylesheet" href="../style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- 引入 Bootstrap Icons 5.3+ -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Chart.js (僅後台需要) -->
+    <!-- CHART_JS -->
+    <!-- /CHART_JS -->
+</head>
+<body>
+    <!-- CONTENT -->
+    <!-- /CONTENT -->
+
+    <!-- FOOTER -->
+    <!-- /FOOTER -->
+
+    <!-- LEGAL_MODAL -->
+    <!-- /LEGAL_MODAL -->
+
+    <!-- POSTER_MODAL (僅首頁需要) -->
+    <!-- POSTER_MODAL -->
+    <!-- /POSTER_MODAL -->
+
+    <!-- TOAST_CONTAINER -->
+    <!-- /TOAST_CONTAINER -->
+
+    <!-- COMMON_SCRIPTS -->
+    <script>
+        // Legal Modal 內容
+        const legalContent = {
+            disclaimer: {
+                title: '<i class="bi bi-file-earmark-text-fill text-primary" style="margin-right: 0.5rem;"></i> 免責聲明',
+                body: `
+                    <h4>1. 醫療建議</h4>
+                    <p>本系統所載之資訊（包括但不限於圖表、數據與分析結果）僅供復健過程之輔助紀錄與參考。本系統不提供醫療診斷或專業醫療建議。</p>
+                    <h4>2. 臨床決策</h4>
+                    <p>任何醫療決策應經由具備執照之物理治療師或醫師評估。使用者不應僅依賴本系統之分析結果作為判斷病情之唯一依據。</p>
+                    <h4>3. 資料正確性</h4>
+                    <p>病患應確保填寫數據之真實性，系統不對因人為填寫錯誤所導致之分析偏差負責。</p>
+                `
+            },
+            privacy: {
+                title: '<i class="bi bi-shield-fill-check text-primary" style="margin-right: 0.5rem;"></i> 隱私權宣告',
+                body: `
+                    <h4>1. 資料蒐集範圍</h4>
+                    <p>本系統蒐集之資料包括：病患姓名、病歷號、密碼及復健過程中產生之疼痛指數、運動項目與個人備註。</p>
+                    <h4>2. 資料用途</h4>
+                    <p>資料僅用於臨床復健進度追蹤、院內統計分析與系統身分驗證。非經使用者授權，不會將個資揭露予第三方。</p>
+                    <h4>3. 儲存安全性</h4>
+                    <p>所有資料均加密存儲於 Google Cloud 安全環境，並透過 Google Apps Script 進行存取控制。</p>
+                `
+            }
+        };
+
+        function openLegalModal(type) {
+            const content = legalContent[type];
+            if (!content) return;
+            document.getElementById('legalModalTitle').innerHTML = content.title;
+            document.getElementById('legalModalBody').innerHTML = content.body;
+            document.getElementById('legalModal').style.display = 'flex';
+        }
+
+        function closeLegalModal() {
+            document.getElementById('legalModal').style.display = 'none';
+        }
+
+        // 點擊 Modal 外部關閉
+        window.onclick = function(event) {
+            const modal = document.getElementById('legalModal');
+            if (modal && event.target == modal) closeLegalModal();
+        }
+
+        // Toast 訊息函式
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.transition = 'all 0.4s ease';
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+    </script>
+    <!-- /COMMON_SCRIPTS -->
+
+    <!-- PAGE_SCRIPTS -->
+    <!-- /PAGE_SCRIPTS -->
+</body>
+</html>

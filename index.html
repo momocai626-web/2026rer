@@ -8,18 +8,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     <!-- 引入 Bootstrap Icons 5.3+ -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Components Library -->
+    <script src="js/components.js"></script>
 </head>
 <body>
-    <header class="site-header">
-        <a href="index.html" class="site-logo">
-            <i class="bi bi-hospital-fill text-primary" style="margin-right: 0.5rem;"></i> 斗六台大醫院 復健部
-        </a>
-        <nav>
-            <a href="login.html" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.35rem;">
-                <i class="bi bi-box-arrow-in-right"></i> 登入系統
-            </a>
-        </nav>
-    </header>
+    <!-- Header Component -->
+    <div id="header-component"></div>
 
     <main>
         <div class="container">
@@ -163,44 +157,26 @@
         </div>
     </section>
 
-    <!-- 海報燈箱 Modal -->
-    <div id="posterModal" class="modal poster-modal" onclick="closePosterModal()">
-        <div class="poster-modal-inner" onclick="event.stopPropagation()">
-            <button class="poster-close-btn" onclick="closePosterModal()">
-                <i class="bi bi-x-lg"></i>
-            </button>
-            <p id="posterModalTitle" style="text-align:center; font-weight:600; margin-bottom:1rem; color:var(--primary-color); font-size:1rem;"></p>
-            <img id="posterModalImg" src="" alt="衛教海報" style="max-width:100%; max-height:80vh; border-radius:0.75rem; display:block; margin:0 auto;">
-        </div>
-    </div>
+    <!-- Poster Modal Component -->
+    <div id="poster-modal-component"></div>
 
-    <footer class="site-footer">
-        <div class="container footer-content">
-            <div class="footer-links">
-                <a href="javascript:void(0)" onclick="openLegalModal('disclaimer')">免責聲明</a>
-                <a href="javascript:void(0)" onclick="openLegalModal('privacy')">隱私權宣告</a>
-            </div>
-            <div class="copyright">
-                © 2026 臺大醫院雲林分院 斗六院區 復健部. All Rights Reserved.
-            </div>
-        </div>
-    </footer>
+    <!-- Footer Component -->
+    <div id="footer-component"></div>
 
-    <!-- Legal Modals -->
-    <div id="legalModal" class="modal legal-modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeLegalModal()" style="position: absolute; top: 1.5rem; right: 2rem; font-size: 2rem; cursor: pointer;">&times;</span>
-            <h3 id="legalModalTitle" style="margin-bottom: 1.5rem; color: var(--primary-color); display: flex; align-items: center; gap: 0.5rem;">聲明標題</h3>
-            <div id="legalModalBody" class="legal-text">
-                <!-- 內容動態填充 -->
-            </div>
-            <div style="margin-top: 2rem; text-align: right;">
-                <button class="btn btn-primary" onclick="closeLegalModal()">我已瞭解</button>
-            </div>
-        </div>
-    </div>
+    <!-- Legal Modal Component -->
+    <div id="legal-modal-component"></div>
 
     <script>
+        // 初始化組件
+        document.addEventListener('DOMContentLoaded', () => {
+            initComponents({
+                header: true,
+                footer: true,
+                legalModal: true,
+                posterModal: true
+            });
+        });
+
         // 判斷是否為 Session 第一次載入 (處理進場動畫)
         (() => {
             // 開發測試友善機制：如果網址包含 ?test=1 或 ?reset=1，自動清除 session 紀錄以利重複測試動畫
@@ -229,50 +205,6 @@
                 initAnimation();
             }
         })();
-
-
-        const legalContent = {
-            disclaimer: {
-                title: '<i class="bi bi-file-earmark-text-fill text-primary" style="margin-right: 0.5rem;"></i> 免責聲明',
-                body: `
-                    <h4>1. 醫療建議</h4>
-                    <p>本系統所載之資訊（包括但不限於圖表、數據與分析結果）僅供復健過程之輔助紀錄與參考。本系統不提供醫療診斷或專業醫療建議。</p>
-                    <h4>2. 臨床決策</h4>
-                    <p>任何醫療決策應經由具備執照之物理治療師或醫師評估。使用者不應僅依賴本系統之分析結果作為判斷病情之唯一依據。</p>
-                    <h4>3. 資料正確性</h4>
-                    <p>病患應確保填寫數據之真實性，系統不對因人為填寫錯誤所導致之分析偏差負責。</p>
-                `
-            },
-            privacy: {
-                title: '<i class="bi bi-shield-fill-check text-primary" style="margin-right: 0.5rem;"></i> 隱私權宣告',
-                body: `
-                    <h4>1. 資料蒐集範圍</h4>
-                    <p>本系統蒐集之資料包括：病患姓名、病歷號、密碼及復健過程中產生之疼痛指數、運動項目與個人備註。</p>
-                    <h4>2. 資料用途</h4>
-                    <p>資料僅用於臨床復健進度追蹤、院內統計分析與系統身分驗證。非經使用者授權，不會將個資揭露予第三方。</p>
-                    <h4>3. 儲存安全性</h4>
-                    <p>所有資料均加密存儲於 Google Cloud 安全環境，並透過 Google Apps Script 進行存取控制。</p>
-                `
-            }
-        };
-
-        function openLegalModal(type) {
-            const content = legalContent[type];
-            if (!content) return;
-            document.getElementById('legalModalTitle').innerHTML = content.title;
-            document.getElementById('legalModalBody').innerHTML = content.body;
-            document.getElementById('legalModal').style.display = 'flex';
-        }
-
-        function closeLegalModal() {
-            document.getElementById('legalModal').style.display = 'none';
-        }
-
-        // 點擊 Modal 外部關閉
-        window.onclick = function(event) {
-            const modal = document.getElementById('legalModal');
-            if (event.target == modal) closeLegalModal();
-        }
 
         // 海報燈箱功能
         function openPosterModal(src, title) {
