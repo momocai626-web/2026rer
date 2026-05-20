@@ -28,7 +28,12 @@
             </div>
 
             <div class="form-group">
-                <label>疼痛程度</label>
+                <label style="display:flex; align-items:center; justify-content:space-between;">
+                    <span>疼痛程度</span>
+                    <button type="button" class="guide-btn" onclick="openPosterModal('images/poster-pain.png', '疼痛程度評估說明')">
+                        <i class="bi bi-info-circle"></i> 說明
+                    </button>
+                </label>
                 <div class="radio-group">
                     <label class="radio-option"><input type="radio" name="painLevel" value="無痛" checked><span>無痛</span></label>
                     <label class="radio-option"><input type="radio" name="painLevel" value="輕微"><span>輕微</span></label>
@@ -39,7 +44,12 @@
             </div>
 
             <div class="form-group">
-                <label>完成運動</label>
+                <label style="display:flex; align-items:center; justify-content:space-between;">
+                    <span>完成運動</span>
+                    <button type="button" class="guide-btn" onclick="openPosterModal('images/poster-exercise.png', '五十肩居家復健運動')">
+                        <i class="bi bi-play-circle"></i> 示範
+                    </button>
+                </label>
                 <div class="checkbox-group">
                     <label class="checkbox-option"><input type="checkbox" name="exercise" value="爬牆"><span>爬牆</span></label>
                     <label class="checkbox-option"><input type="checkbox" name="exercise" value="毛巾操"><span>毛巾操</span></label>
@@ -68,6 +78,15 @@
     </div>
 
     <div id="toast-container-component"></div>
+
+    <!-- 海報燈箱 Modal -->
+    <div id="posterModal" class="modal poster-modal" onclick="closePosterModal()">
+        <div class="poster-modal-inner" onclick="event.stopPropagation()">
+            <button class="poster-close-btn" onclick="closePosterModal()"><i class="bi bi-x-lg"></i></button>
+            <p id="posterModalTitle" style="text-align:center; font-weight:600; margin-bottom:1rem; color:var(--primary-color); font-size:1rem;"></p>
+            <img id="posterModalImg" src="" alt="衛教海報" style="max-width:100%; max-height:80vh; border-radius:0.75rem; display:block; margin:0 auto;">
+        </div>
+    </div>
 
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbyb_GkXOiv8-soq6hOUVTHdKRsayFsP56WkA6SOhD9aOxmab5OxXUUbguWFpwnhiVDcjQ/exec';
@@ -143,6 +162,20 @@
             sessionStorage.removeItem('currentPatient');
             window.location.href = 'index.html';
         }
+
+        function openPosterModal(src, title) {
+            document.getElementById('posterModalImg').src = src;
+            document.getElementById('posterModalTitle').textContent = title;
+            document.getElementById('posterModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        function closePosterModal() {
+            document.getElementById('posterModal').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closePosterModal();
+        });
     </script>
 </body>
 </html>

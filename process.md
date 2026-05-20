@@ -2,7 +2,42 @@
 
 ---
 
-### 22:50 - 系統優化成果報告整合
+## 2026-05-20 (v1.6 資安強化 + RWD 完整版)
+
+### 資安修正
+- **後端登入驗證**：新增 `loginPatient()` function，登入改呼叫 `action: 'login'`，後端比對帳密後只回傳不含密碼的使用者資料，密碼不再流出前端。
+- **XSS 修正**：`admin.html` 的編輯按鈕從 `onclick='openEditModal(${JSON.stringify(patient)})'` 改為 `data-edit-id` + `openEditModalById()`，完全消除 HTML 注入風險。
+- **角色判斷修正**：`rehab-form.html` 的角色檢查從 `patient['角色'] &&` 改為 `!patient['角色'] ||`，空值角色不再能繞過驗證。
+- **`window.onclick` 修正**：`components.js` 改用 `addEventListener`，不再覆蓋全域事件。
+
+### 資料穩定性
+- **recordId 唯一鍵**：records sheet 新增 `recordId` 欄位，`createRecord` 自動產生，`deleteRecord` 改用 ID 查找行號，解決連續刪除行號位移的競態問題。
+- **updateRecord 新增**：補齊線上版已有但本地缺少的 `updateRecord` action。
+- **getOrCreateSheet 修正**：`Math.max(..., 1)` 防止空表時 `getRange(1,1,1,0)` 拋出例外。
+- **formatDate 時區修正**：改用本地時間 `getFullYear/getMonth/getDate`，台灣 UTC+8 深夜紀錄不再顯示為前一天。
+
+### 後台 RWD (admin.html)
+- 表格手機版改為卡片堆疊模式，所有 `<td>` 加上 `data-label` 屬性，CSS 用 `::before` 顯示欄位名稱。
+- `admin-container` 加上 `align-self: center` 修正 flex child 在 `body { display: flex }` 下無法置中的問題。
+
+### 表單 RWD (rehab-form.html + style.css)
+- 補齊 `form-container`、`radio-group`、`checkbox-group`、`radio-option`、`checkbox-option` 完整 CSS（原本完全缺失）。
+- 疼痛程度與完成運動選項改為純視覺 pill 按鈕，原生 `input` 用 `position: absolute; opacity: 0` 隱藏，消除點擊抖動三個來源：`flex: 1 1 auto` → `flex: 1 1 0`、input 脫離 flow、`font-weight` 改用 `text-shadow` 模擬。
+- 手機版（≤600px）表單全寬無圓角，選項改為 3 欄 grid。
+
+### 衛教指南整合
+- `rehab-form.html` 疼痛程度欄位旁新增「ⓘ 說明」按鈕，點擊開啟 `poster-pain.png` 燈箱。
+- 完成運動欄位旁新增「▶ 示範」按鈕，點擊開啟 `poster-exercise.png` 燈箱。
+- 新增 `.guide-btn` pill 樣式，hover 變實心綠。
+
+### Git & 部署
+- 更新 `.gitignore` 排除 `.agents/`、`temp_huashu_design/`、`skills-lock.json`、`skills_list.txt`。
+- 新增追蹤 `components/`、`js/`、`layouts/` 資料夾。
+- Code.gs 重新部署，`doGet` 更新 `availableActions` 列表含 `login`。
+
+---
+
+
 - **變更總覽**：將「復健紀錄管理系統」從基礎的 MVP 升級為具備專業醫療感、日常親切實用性以及衛教宣導能力的高保真臨床應用系統。優化涵蓋了視覺設計、互動體驗、響應式閱讀、衛教整合以及後端邏輯。
 - **重點更新內容**：
   1. **醫療專業級視覺與極簡動畫**：引入以「醫療綠 (Teal 600)」為核心的色系，搭配 Bootstrap 5.3 Icons 元件，全面取代 legacy emojis；採用 `huashu-design` 推薦的頂級 `cubic-bezier(0.16, 1, 0.3, 1)` 緩動曲線實作 `fadeUp` 進場動畫；將免責聲明、隱私權宣告等 Modal 更換為彈簧阻尼 `cubic-bezier(0.34, 1.56, 0.64, 1)` 動畫，搭配極致尊榮的 `backdrop-filter: blur(6px)` 背景毛玻璃景深。
